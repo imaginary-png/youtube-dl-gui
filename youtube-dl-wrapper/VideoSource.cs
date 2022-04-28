@@ -21,6 +21,7 @@ namespace youtube_dl_gui_wrapper
         public List<VideoFormat> Formats { get; set; }
         public string SelectedFormat { get; set; }
         public DownloadInfo DownloadLog { get; private set; }
+        public CancellationToken Token { get; private set; }
 
         public VideoSource(string url)
         {
@@ -29,6 +30,7 @@ namespace youtube_dl_gui_wrapper
             SelectedFormat = string.Empty;
             DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
+            Token = _cancelToken.Token;
         }
 
 
@@ -41,18 +43,28 @@ namespace youtube_dl_gui_wrapper
             Formats = await YoutubeDlProcess.GetFormats(URL);
         }
 
-
-        public void Start()
+        /// <summary>
+        /// Starts youtube-dl download process
+        /// </summary>
+        public async Task Download()
         {
             if (_isDownloading) return;
-            _isDownloading = false;
-            YoutubeDlProcess.StartDownload(this);
+            _isDownloading = true;
+            await YoutubeDlProcess.StartDownload(this);
         }
 
+        /// <summary>
+        /// Cancels Download
+        /// </summary>
         public void Cancel()
         {
-            _isDownloading = true;
+            _isDownloading = false;
             _cancelToken.Cancel();
+            Console.WriteLine($"\n\n" +
+                              $"================================================================\n" +
+                              $"Cancelling Download of {URL}\n" +
+                              $"================================================================\n" +
+                              $"\n\n");
         }
 
 

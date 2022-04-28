@@ -13,16 +13,18 @@ namespace youtube_dl_gui_wrapper
 {
     public static class YoutubeDlProcess
     {
-
-
-        public static void StartDownload(VideoSource source)
+        public static async Task StartDownload(VideoSource source)
         {
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
+                if (args.Data == null || !args.Data.Contains("%")) return;
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
+            var parameters = source.URL + " --newline";
+            await Execute(parameters, outputDel, null, token: source.Token);
         }
+
         /// <summary>
         /// Returns a list of VideoFormat. Uses arg "youtube-dl -F"  
         /// Throws ArgumentException if invalid URL.
@@ -150,6 +152,7 @@ namespace youtube_dl_gui_wrapper
             var height = string.Empty;
             var width = string.Empty;
             var fps = Regex.Match(formatStringArr, @"\d+fps").Groups[0].Value;
+            var size = split[^1] == "(best)" ? "Unknown" : split[^1];
 
             if (resolution.Contains("x"))
             {
@@ -158,7 +161,7 @@ namespace youtube_dl_gui_wrapper
                 width = heightxwidth[1];
             }
 
-            return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps);
+            return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps, size);
         }
         #endregion
 
@@ -166,6 +169,20 @@ namespace youtube_dl_gui_wrapper
 
         private static void UpdateDownloadInfo(DownloadInfo toUpdate, string info)
         {
+            //Example output:
+            //[download]   0.2% of 151.34MiB at 83.58KiB/s ETA 30:50
+            var infoArr = Regex.Replace(info, @"\s+", " ").Split(" "); //get rid of extra spaces, then split
+
+            var percent = infoArr[1];
+            var size = infoArr[3];
+            var speed = infoArr[5];
+            var eta = infoArr[7];
+
+
+            toUpdate.FileSize = size;
+            toUpdate.DownloadPercentage = percent;
+            toUpdate.DownloadSpeed = speed;
+            toUpdate.ETA = eta;
             //string stuff to get pieces of info
         }
 

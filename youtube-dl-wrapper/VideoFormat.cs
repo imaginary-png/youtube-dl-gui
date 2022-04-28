@@ -11,6 +11,7 @@ namespace youtube_dl_gui_wrapper
         public string Height { get; set; } //should these be ints? does it matter? They're never really used as numbers...
         public string Width { get; set; }
         public string Fps { get; set; }
+        public string FileSize { get; set; }
 
 
         public VideoFormat(string formatCode, string extension, string resolution, string resolutionLabel, string height, string width, string fps)
@@ -24,6 +25,17 @@ namespace youtube_dl_gui_wrapper
             Fps = fps;
         }
 
+        public VideoFormat(string formatCode, string extension, string resolution, string resolutionLabel, string height, string width, string fps, string fileSize)
+        {
+            FormatCode = formatCode;
+            Extension = extension;
+            Resolution = resolution;
+            ResolutionLabel = resolutionLabel;
+            Height = height;
+            Width = width;
+            Fps = fps;
+            FileSize = fileSize;
+        }
 
         public override string ToString()
         {
@@ -33,7 +45,8 @@ namespace youtube_dl_gui_wrapper
                    $"ResolutionLabel: {ResolutionLabel}\n" +
                    $"Height: {Height}\n"+
                    $"Width: {Width}\n"+
-                   $"Fps: {Fps}\n";
+                   $"Fps: {Fps}\n" +
+                   $"Size: {FileSize}\n";
         }
     }
 }

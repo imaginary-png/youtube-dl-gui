@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Runtime.CompilerServices;
 using youtube_dl_gui_wrapper.Annotations;
 
@@ -10,6 +13,7 @@ namespace youtube_dl_gui_wrapper.Models
         private string _downloadSpeed;
         private string _fileSize;
         private string _downloaded;
+        private string _eta;
 
         public string DownloadPercentage
         {
@@ -19,6 +23,7 @@ namespace youtube_dl_gui_wrapper.Models
                 if (value == _downloadPercentage) return;
                 _downloadPercentage = value;
                 OnPropertyChanged(nameof(DownloadPercentage));
+                UpdateTotalDownloaded();
             }
         }
 
@@ -55,7 +60,30 @@ namespace youtube_dl_gui_wrapper.Models
             }
         }
 
+        public string ETA
+        {
+            get => _eta;
+            set
+            {
+                if (value == _eta) return;
+                _eta = value;
+                OnPropertyChanged(nameof(ETA));
+            }
+        }
 
+
+        
+
+
+        private void UpdateTotalDownloaded()
+        {
+            if (_fileSize == string.Empty || _downloadPercentage == string.Empty) return;
+            string unit = _fileSize.Substring(_fileSize.Length - 3); 
+            double percent = Double.Parse(_downloadPercentage.Replace("%", ""));
+            double size = Double.Parse(_fileSize.Remove(_fileSize.Length - 3));
+            Downloaded = (Math.Round(percent/100 * size,2)).ToString(CultureInfo.InvariantCulture)+ unit;
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -63,5 +91,15 @@ namespace youtube_dl_gui_wrapper.Models
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public override string ToString()
+        {
+            return $"%: {DownloadPercentage}\n" +
+                   $" : {Downloaded}\n" +
+                   $"of: {FileSize}\n" +
+                   $"Speed: {DownloadSpeed}\n" +
+                   $"Eta: {ETA}";
+        }
+
     }
 }
