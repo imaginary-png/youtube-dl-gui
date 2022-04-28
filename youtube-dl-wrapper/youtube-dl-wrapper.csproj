@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>youtube_dl_gui</RootNamespace>
+    <RootNamespace>youtube_dl_gui_wrapper</RootNamespace>
   </PropertyGroup>
 
 </Project>
