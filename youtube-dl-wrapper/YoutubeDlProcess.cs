@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace youtube_dl_gui_wrapper
 {
@@ -12,14 +14,17 @@ namespace youtube_dl_gui_wrapper
     {
 
 
-
+        public static void StartDownload(VideoSource source)
+        {
+            //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
+        }
         /// <summary>
         /// Returns a list of VideoFormat. Uses arg "youtube-dl -F"  
         /// Throws ArgumentException if invalid URL.
         /// </summary>
         /// <param name="url">The URL of the video</param>
         /// <returns>A List of available video formats</returns>
-        public static List<VideoFormat> GetFormats(string url)
+        public static async Task<List<VideoFormat>> GetFormats(string url)
         {
             var parameters = url + " -F";
             var formatOutputList = new List<string>();
@@ -28,16 +33,8 @@ namespace youtube_dl_gui_wrapper
             {
                 formatOutputList.Add(args.Data);
             });
-
-            try
-            {
-                Execute(parameters, outputDel, null);
-            }
-            catch (ArgumentException e)
-            {
-                //Console.WriteLine(">>|" + e.Message + "|<<");
-                throw;
-            }
+            
+            await Execute(parameters, outputDel);
 
             var formats = ExtractInfoForFormats(formatOutputList);
 
@@ -45,7 +42,17 @@ namespace youtube_dl_gui_wrapper
             return formats;
         }
 
-        private static void Execute(string parameters, DataReceivedEventHandler outputDel, DataReceivedEventHandler errorDel)
+        /// <summary>
+        /// Executes youtube-dl.exe with passed in parameters.
+        ///
+        /// Allows DataRecievedEventHandlers for output and error data received.  
+        /// </summary>
+        /// <param name="parameters">Arguments for youtube-dl</param>
+        /// <param name="outputDel">Handler for OutputData events</param>
+        /// <param name="errorDel">Handler for ErrorData events</param>
+        /// <param name="token">Cancellation token</param>
+        /// <returns></returns>
+        private static async Task Execute(string parameters, DataReceivedEventHandler outputDel = null, DataReceivedEventHandler errorDel = null, CancellationToken token = default)
         {
             var errors = new List<string>();
 
@@ -81,7 +88,7 @@ namespace youtube_dl_gui_wrapper
                 p.Start();
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
-                p.WaitForExit();
+                await p.WaitForExitAsync(token);
 
                 if (errors.Count <= 0) return;
 
@@ -90,6 +97,7 @@ namespace youtube_dl_gui_wrapper
                 {
                     errMsg += s + "\n";
                 });
+
 
                 throw new ArgumentException(errMsg);
             }
@@ -100,6 +108,11 @@ namespace youtube_dl_gui_wrapper
 
         #region available video format helpers
 
+        /// <summary>
+        /// Takes youtube-dl's -F output and extracts relevant data into a List of <see cref="VideoFormat"/>
+        /// </summary>
+        /// <param name="formatList">List of strings from youtube-dl -F</param>
+        /// <returns>A List of <see cref="VideoFormat"/>s available</returns>
         private static List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
         {
             var videoFormats = new List<VideoFormat>();
@@ -116,6 +129,11 @@ namespace youtube_dl_gui_wrapper
             return videoFormats;
         }
 
+        /// <summary>
+        /// Helper function for <see cref="ExtractInfoForFormats"/>  
+        /// </summary>
+        /// <param name="formatStringArr"></param>
+        /// <returns>A <see cref="VideoFormat"/> Object</returns>
         private static VideoFormat GetVideoFormatFromString(string formatStringArr)
         {
             var split = Regex.Replace(formatStringArr, @"\s+", " ").Split(" ");

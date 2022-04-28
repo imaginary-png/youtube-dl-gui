@@ -11,7 +11,7 @@ namespace youtube_dl_wrapper_Tests
         private readonly string realURL = @"https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
         [Fact]
-        public void Formats_HasNoCountWhenIncorrectURL ()
+        public async void Formats_HasNoCountWhenIncorrectURL ()
         {
             //arrange
             var source = new VideoSource(fakeURL);
@@ -19,9 +19,9 @@ namespace youtube_dl_wrapper_Tests
             //act
             try
             {
-                source.GetVideoFormats();
+                await source.GetVideoFormats();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 
             }
@@ -32,7 +32,7 @@ namespace youtube_dl_wrapper_Tests
         }
 
         [Fact]
-        public void Formats_HasCountWhenCorrectURL ()
+        public async void Formats_HasCountWhenCorrectURL ()
         {
             //arrange
             var source = new VideoSource(realURL);
@@ -40,9 +40,9 @@ namespace youtube_dl_wrapper_Tests
             //act
             try
             {
-                source.GetVideoFormats();
+                await source.GetVideoFormats();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 
             }
@@ -53,7 +53,7 @@ namespace youtube_dl_wrapper_Tests
         }
 
         [Fact]
-        public void Formats_HasErrorMessageWhenIncorrectURL()
+        public async void Formats_HasErrorMessageWhenIncorrectURL()
         {
             //arrange
             var source = new VideoSource(fakeURL);
@@ -62,7 +62,7 @@ namespace youtube_dl_wrapper_Tests
             //act
             try
             {
-                source.GetVideoFormats();
+                await source.GetVideoFormats();
             }
             catch (ArgumentException e)
             {
@@ -74,7 +74,7 @@ namespace youtube_dl_wrapper_Tests
         }
 
         [Fact]
-        public void Formats_HasNoErrorMessageWhenCorrectURL()
+        public async void Formats_HasNoErrorMessageWhenCorrectURL()
         {
             //arrange
             var source = new VideoSource(realURL);
@@ -83,7 +83,7 @@ namespace youtube_dl_wrapper_Tests
             //act
             try
             {
-                source.GetVideoFormats();
+                await source.GetVideoFormats();
             }
             catch (ArgumentException e)
             {

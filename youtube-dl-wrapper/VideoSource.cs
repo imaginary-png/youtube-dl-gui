@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Annotations;
 using youtube_dl_gui_wrapper.Models;
@@ -13,6 +14,8 @@ namespace youtube_dl_gui_wrapper
 {
     public class VideoSource
     {
+        private CancellationTokenSource _cancelToken;
+
         public string URL { get; set; }
         public List<VideoFormat> Formats { get; set; }
         public string SelectedFormat { get; set; }
@@ -24,6 +27,7 @@ namespace youtube_dl_gui_wrapper
             Formats = new List<VideoFormat>();
             SelectedFormat = string.Empty;
             Log = new DownloadInfo();
+            _cancelToken = new CancellationTokenSource();
         }
 
 
@@ -31,16 +35,14 @@ namespace youtube_dl_gui_wrapper
         /// Gets a list of available video formats.  
         /// Throws ArgumentException if invalid URL.
         /// </summary>
-        public void GetVideoFormats()
+        public async Task GetVideoFormats()
         {
-            try
-            {
-               Formats = YoutubeDlProcess.GetFormats(URL);
-            }
-            catch (ArgumentException e)
-            {
-                throw;
-            }
+            Formats = await YoutubeDlProcess.GetFormats(URL);
+        }
+
+        public void Cancel()
+        {
+            _cancelToken.Cancel();
         }
     }
 }

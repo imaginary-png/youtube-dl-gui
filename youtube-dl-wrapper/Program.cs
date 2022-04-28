@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 
 namespace youtube_dl_gui_wrapper
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Hello World!");
             var url = @"https://www.youtube.com/watch?v=Xpt9TyFzwJ";
@@ -13,21 +15,34 @@ namespace youtube_dl_gui_wrapper
 
             var source = new VideoSource(url);
 
+            //Start(source);
+
+            source.URL = @"https://www.youtube.com/watch?v=Xpt9TyFzwJA";
+
+            Start(source);
+
+            Thread.Sleep(1500);
+
+            source.Cancel();
+            
+            Thread.Sleep(1500);
+
+            //source.Formats = YoutubeDlProcess.GetFormats(source.URL);
+
+            source.Formats.ForEach(Console.WriteLine);
+            
+        }
+
+        public static async Task Start(VideoSource source)
+        {
             try
             {
-                source.GetVideoFormats();
+                await source.GetVideoFormats();
             }
             catch (ArgumentException e)
             {
                 Console.WriteLine(e.Message);
             }
-
-            source.URL = @"https://www.youtube.com/watch?v=Xpt9TyFzwJA";
-            source.GetVideoFormats();
-
-            //source.Formats = YoutubeDlProcess.GetFormats(source.URL);
-
-            source.Formats.ForEach(Console.WriteLine);
         }
     }
 }
