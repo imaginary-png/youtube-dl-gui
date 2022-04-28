@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Channels;
 
 namespace youtube_dl_gui_wrapper
 {
@@ -8,7 +9,9 @@ namespace youtube_dl_gui_wrapper
         {
             Console.WriteLine("Hello World!");
 
-            YoutubeDlProcess.GetFormats(@"https://www.youtube.com/watch?v=Xpt9TyFzwJA");
+            var formats = YoutubeDlProcess.GetFormats(@"https://www.youtube.com/watch?v=Xpt9TyFzwJA");
+
+            formats.ForEach(Console.WriteLine);
         }
     }
 }
