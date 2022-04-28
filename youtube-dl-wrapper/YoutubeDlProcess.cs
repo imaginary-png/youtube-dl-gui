@@ -14,10 +14,11 @@ namespace youtube_dl_gui_wrapper
 
 
         /// <summary>
-        /// Returns a VideoFormats Object with list of available formats. youtube-dl -F  
+        /// Returns a list of VideoFormat. Uses arg "youtube-dl -F"  
         /// Throws ArgumentException if invalid URL.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">The URL of the video</param>
+        /// <returns>A List of available video formats</returns>
         public static List<VideoFormat> GetFormats(string url)
         {
             var parameters = url + " -F";
@@ -34,7 +35,7 @@ namespace youtube_dl_gui_wrapper
             }
             catch (ArgumentException e)
             {
-                Console.WriteLine(">>|" + e.Message + "|<<");
+                //Console.WriteLine(">>|" + e.Message + "|<<");
                 throw;
             }
 
@@ -48,13 +49,17 @@ namespace youtube_dl_gui_wrapper
         {
             var errors = new List<string>();
 
-            using (Process p = new Process())
+            using (var p = new Process())
             {
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.CreateNoWindow = false;
-
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    FileName = "youtube-dl.exe", //load custom file location later... File.Exists()... from user config... etc.
+                    Arguments = parameters
+                };
 
                 p.OutputDataReceived += (sender, args) =>
                 {/*
@@ -68,20 +73,14 @@ namespace youtube_dl_gui_wrapper
                 {
                     if (string.IsNullOrEmpty(args.Data)) return;
                     errors.Add(args.Data);
-                    Console.WriteLine($"Error: {args.Data}|");
+                    //Console.WriteLine($"Error: {args.Data}|");
                     Trace.WriteLine($"Error: {args.Data}|");
                 };
-
                 p.ErrorDataReceived += errorDel;
 
-                p.StartInfo.FileName = "youtube-dl.exe";
-                p.StartInfo.Arguments = parameters;
-
                 p.Start();
-
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
-
                 p.WaitForExit();
 
                 if (errors.Count <= 0) return;
@@ -99,43 +98,46 @@ namespace youtube_dl_gui_wrapper
 
         #region helpers
 
+        #region available video format helpers
+
         private static List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
         {
             var videoFormats = new List<VideoFormat>();
 
             formatList.RemoveRange(0, 3); //remove the first 3 lines as they are not relevant.
 
-
-            for (int i = 0; i < formatList.Count; i++)
+            foreach (var str in formatList)
             {
-                if (formatList[i] == null) continue;
-
-                var split = Regex.Replace(formatList[i], @"\s+", " ").Split(" ");
-
-                string fps = string.Empty;
-                foreach (var s1 in split) //fps isn't in a fixed location, and may not exist if audio only.
-                {
-                    if (s1.Contains("fps")) fps = s1;
-                }
-                //formatList[i] = $"format code: {split[0]} | extension: {split[1]} | resolution: {split[2]} {split[3]} | fps: {fps}";
-                var formatCode = split[0];
-                var ext = split[1];
-                var resolution = split[2];
-                var resolutionLabel = split[3];
-                var height = string.Empty;
-                var width = string.Empty;
-
-                if (resolution.Contains("x"))
-                {
-                    var heightxwidth = resolution.Split("x");
-                    height = heightxwidth[0];
-                    width = heightxwidth[1];
-                }
-                videoFormats.Add(new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps));
+                if (str == null) continue;
+                var vf = GetVideoFormatFromString(str);
+                videoFormats.Add(vf);
             }
 
             return videoFormats;
         }
+
+        private static VideoFormat GetVideoFormatFromString(string formatStringArr)
+        {
+            var split = Regex.Replace(formatStringArr, @"\s+", " ").Split(" ");
+
+            var formatCode = split[0];
+            var ext = split[1];
+            var resolution = split[2];
+            var resolutionLabel = split[3];
+            var height = string.Empty;
+            var width = string.Empty;
+            var fps = Regex.Match(formatStringArr, @"\d+fps").Groups[0].Value;
+
+            if (resolution.Contains("x"))
+            {
+                var heightxwidth = resolution.Split("x");
+                height = heightxwidth[0];
+                width = heightxwidth[1];
+            }
+
+            return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps);
+        }
+        #endregion
 
         #endregion
     }

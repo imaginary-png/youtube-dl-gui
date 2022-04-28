@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\youtube-dl-wrapper\youtube-dl-wrapper.csproj" />
+  </ItemGroup>
+
 </Project>
