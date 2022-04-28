@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui_wrapper
 {
@@ -17,6 +18,10 @@ namespace youtube_dl_gui_wrapper
         public static void StartDownload(VideoSource source)
         {
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
+            var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
+            {
+                UpdateDownloadInfo(source.DownloadLog, args.Data);
+            });
         }
         /// <summary>
         /// Returns a list of VideoFormat. Uses arg "youtube-dl -F"  
@@ -33,7 +38,7 @@ namespace youtube_dl_gui_wrapper
             {
                 formatOutputList.Add(args.Data);
             });
-            
+
             await Execute(parameters, outputDel);
 
             var formats = ExtractInfoForFormats(formatOutputList);
@@ -155,6 +160,15 @@ namespace youtube_dl_gui_wrapper
 
             return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps);
         }
+        #endregion
+
+        #region Download info string helpers
+
+        private static void UpdateDownloadInfo(DownloadInfo toUpdate, string info)
+        {
+            //string stuff to get pieces of info
+        }
+
         #endregion
 
         #endregion

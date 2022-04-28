@@ -15,18 +15,19 @@ namespace youtube_dl_gui_wrapper
     public class VideoSource
     {
         private CancellationTokenSource _cancelToken;
+        private bool _isDownloading = false;
 
         public string URL { get; set; }
         public List<VideoFormat> Formats { get; set; }
         public string SelectedFormat { get; set; }
-        public DownloadInfo Log { get; private set; }
+        public DownloadInfo DownloadLog { get; private set; }
 
         public VideoSource(string url)
         {
             URL = url;
             Formats = new List<VideoFormat>();
             SelectedFormat = string.Empty;
-            Log = new DownloadInfo();
+            DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
         }
 
@@ -40,9 +41,20 @@ namespace youtube_dl_gui_wrapper
             Formats = await YoutubeDlProcess.GetFormats(URL);
         }
 
+
+        public void Start()
+        {
+            if (_isDownloading) return;
+            _isDownloading = false;
+            YoutubeDlProcess.StartDownload(this);
+        }
+
         public void Cancel()
         {
+            _isDownloading = true;
             _cancelToken.Cancel();
         }
+
+
     }
 }
