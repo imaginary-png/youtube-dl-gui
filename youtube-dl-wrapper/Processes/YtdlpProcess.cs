@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,126 +13,23 @@ namespace youtube_dl_gui_wrapper
     /// <summary>
     /// For use with yt-dlp <see cref="https://github.com/yt-dlp/yt-dlp"/>
     /// </summary>
-    public class YtdlpProcess
+    public class YtdlpProcess : BaseYtDlProcess
     {
-        private string _exe;
-        private string _outputFolder;
-        private string _namingScheme = "%(title)s-%(id)s.%(ext)s";
-
-        public YtdlpProcess(string exe = "yt-dlp.exe", string outputFolder = @"%USERPROFILE%\Desktop\")
+        /// <summary>
+        /// Creates a <see cref="YtdlpProcess"/> with an exe path.
+        /// </summary>
+        /// <param name="exe">Defaults to PATH - "yt-dlp.exe"</param>
+        public YtdlpProcess(string exe = "yt-dlp.exe") : base(exe)
         {
-            _exe = exe;
-            _outputFolder = outputFolder;
-        }
-        public static async Task<bool> StartDownload(VideoSource source)
-        {
-            //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
-            var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
-            {
-                if (args.Data == null || 
-                    !(args.Data.Contains("[download]") &&   //if line doesn't contain strings [download] and %, e.g.,
-                      args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
-                UpdateDownloadInfo(source.DownloadLog, args.Data);
-            });
-            var parameters = @"-o %USERPROFILE%\Desktop\%(title)s-%(id)s.%(ext)s " + source.URL + " --newline";
-            return await Execute(parameters, outputDel, null, token: source.Token);
         }
 
         /// <summary>
-        /// Returns a list of VideoFormat. Uses arg "youtube-dl -F"  
-        /// Throws ArgumentException if invalid URL.
+        /// Creates a <see cref="YtdlpProcess"/> with an exe path and output path.
         /// </summary>
-        /// <param name="url">The URL of the video</param>
-        /// <returns>A List of available video formats</returns>
-        public static async Task<List<VideoFormat>> GetFormats(string url)
+        /// <param name="outputFolder">Defaults to Desktop</param>
+        /// <param name="exe">Defaults to PATH - "yt-dlp.exe"</param>
+        public YtdlpProcess(string outputFolder, string exe = "yt-dlp.exe") : base(outputFolder, exe)
         {
-            var parameters = url + " -F";
-            var formatOutputList = new List<string>();
-
-            var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
-            {
-                if (string.IsNullOrWhiteSpace(args.Data)) return;
-                formatOutputList.Add(args.Data);
-            });
-
-            await Execute(parameters, outputDel);
-
-            var formats = ExtractInfoForFormats(formatOutputList);
-
-            //formatOutputList.ForEach(Console.WriteLine);
-            return formats;
-        }
-
-
-        //PUT THIS INTO ABSTRACT BASE CLASS? IT SHOULD BE THE SAME IN BOTH YOUTUBE-DL AND YT-DLP
-        /// <summary>
-        /// Executes youtube-dl.exe with passed in parameters.
-        ///
-        /// Allows DataRecievedEventHandlers for output and error data received.  
-        /// </summary>
-        /// <param name="parameters">Arguments for youtube-dl</param>
-        /// <param name="outputDel">Handler for OutputData events</param>
-        /// <param name="errorDel">Handler for ErrorData events</param>
-        /// <param name="token">Cancellation token</param>
-        /// <returns></returns>
-        private static async Task<bool> Execute(string parameters, DataReceivedEventHandler outputDel = null, DataReceivedEventHandler errorDel = null, CancellationToken token = default)
-        {
-            var errors = new List<string>();
-
-            using (var p = new Process())
-            {
-                p.StartInfo = new ProcessStartInfo
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    FileName = "yt-dlp.exe", //load custom file location later... File.Exists()... from user config... etc.
-                    Arguments = parameters
-                };
-
-                p.OutputDataReceived += (sender, args) =>
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.BackgroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine($"Output: {args.Data}");
-                    Console.ResetColor();
-                    Trace.WriteLine($"Output: {args.Data}");
-                };
-                p.OutputDataReceived += outputDel;
-
-
-                p.ErrorDataReceived += (sender, args) =>
-                {
-                    if (string.IsNullOrEmpty(args.Data)) return;
-                    errors.Add(args.Data);
-
-                    /* Console.ForegroundColor = ConsoleColor.Cyan;
-                     Console.BackgroundColor = ConsoleColor.DarkGray;
-                     Console.WriteLine($"Error: {args.Data}|");
-                     Console.ResetColor();*/
-
-                    Trace.WriteLine($"Error: {args.Data}|");
-                };
-                p.ErrorDataReceived += errorDel;
-
-                p.Start();
-                p.BeginOutputReadLine();
-                p.BeginErrorReadLine();
-                await p.WaitForExitAsync(token);
-                var exitCode = p.ExitCode;
-
-                if (errors.Count <= 0) return p.ExitCode == 0 ? true : false;
-
-                string errMsg = "";
-                errors.ForEach(s =>
-                {
-                    errMsg += s + "\n";
-                });
-
-
-                throw new ArgumentException(errMsg);
-            }
         }
 
 
@@ -138,12 +37,8 @@ namespace youtube_dl_gui_wrapper
 
         #region available video format helpers
 
-        /// <summary>
-        /// Takes youtube-dl's -F output and extracts relevant data into a List of <see cref="VideoFormat"/>
-        /// </summary>
-        /// <param name="formatList">List of strings from youtube-dl -F</param>
-        /// <returns>A List of <see cref="VideoFormat"/>s available</returns>
-        private static List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
+        
+        protected override List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
         {
             var videoFormats = new List<VideoFormat>();
            
@@ -165,12 +60,8 @@ namespace youtube_dl_gui_wrapper
             return null;
         }
 
-        /// <summary>
-        /// Helper function for <see cref="ExtractInfoForFormats"/>  
-        /// </summary>
-        /// <param name="formatStringArr"></param>
-        /// <returns>A <see cref="VideoFormat"/> Object</returns>
-        private static VideoFormat GetVideoFormatFromString(string formatStringArr)
+        
+        protected override VideoFormat GetVideoFormatFromString(string formatStringArr)
         {
             var split = Regex.Replace(formatStringArr, @"\s+", " ").Split(" ");
 
@@ -196,7 +87,7 @@ namespace youtube_dl_gui_wrapper
 
         #region Download info string helpers
 
-        private static void UpdateDownloadInfo(DownloadInfo toUpdate, string info)
+        protected override void UpdateDownloadInfo(DownloadInfo toUpdate, string info)
         {
             Console.WriteLine(info);
             //Example output:

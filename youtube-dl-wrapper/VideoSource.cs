@@ -25,7 +25,10 @@ namespace youtube_dl_gui_wrapper
         public CancellationToken Token { get; private set; }
 
         
-
+        /// <summary>
+        /// Defaults to using youtube-dl
+        /// </summary>
+        /// <param name="url"></param>
         public VideoSource(string url)
         {
             URL = url;
@@ -34,6 +37,7 @@ namespace youtube_dl_gui_wrapper
             DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
             Token = _cancelToken.Token;
+            _process = new YoutubeDlProcess();
         }
 
 
@@ -43,8 +47,7 @@ namespace youtube_dl_gui_wrapper
         /// </summary>
         public async Task GetVideoFormats()
         {
-            //Formats = await YoutubeDlProcess.GetFormats(URL);
-            Formats = await YtdlpProcess.GetFormats(URL);
+            Formats = await _process.GetFormats(URL);
         }
 
         /// <summary>
@@ -54,8 +57,7 @@ namespace youtube_dl_gui_wrapper
         {
             if (_isDownloading) return;
             _isDownloading = true;
-            await YoutubeDlProcess.StartDownload(this);
-            //await YtdlpProcess.StartDownload(this);
+            await _process.StartDownload(this);
         }
 
         /// <summary>
@@ -75,6 +77,23 @@ namespace youtube_dl_gui_wrapper
         public void ChangeYoutubeDlProcess(IYoutubeDownloadProcess process)
         {
             _process = process;
+        }
+
+        /// <summary>
+        /// Use yt-dlp.exe
+        /// </summary>
+        public void UseYTDLP()
+        {
+            //check if in use before replacing?
+            _process = new YtdlpProcess();
+        }
+
+        /// <summary>
+        /// use youtube-dl.exe
+        /// </summary>
+        public void UseYoutubeDL()
+        {
+            _process = new YoutubeDlProcess();
         }
 
     }

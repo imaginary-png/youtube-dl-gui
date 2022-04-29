@@ -25,8 +25,9 @@ namespace youtube_dl_gui_wrapper
             Thread.Sleep(5000);
             source.Cancel();
 
-
             source.Formats.ForEach(Console.WriteLine);
+
+            YtdlpProcess x = new YtdlpProcess();
 
 
         }
