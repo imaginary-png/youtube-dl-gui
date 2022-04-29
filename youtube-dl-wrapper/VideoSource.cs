@@ -14,14 +14,17 @@ namespace youtube_dl_gui_wrapper
 {
     public class VideoSource
     {
-        private CancellationTokenSource _cancelToken;
+        private readonly CancellationTokenSource _cancelToken;
         private bool _isDownloading = false;
+        private IYoutubeDownloadProcess _process;
 
         public string URL { get; set; }
         public List<VideoFormat> Formats { get; set; }
         public string SelectedFormat { get; set; }
         public DownloadInfo DownloadLog { get; private set; }
         public CancellationToken Token { get; private set; }
+
+        
 
         public VideoSource(string url)
         {
@@ -67,6 +70,10 @@ namespace youtube_dl_gui_wrapper
                               $"\n\n");
         }
 
+        public void ChangeYoutubeDlProcess(IYoutubeDownloadProcess process)
+        {
+            _process = process;
+        }
 
     }
 }

@@ -13,6 +13,8 @@ namespace youtube_dl_gui_wrapper
 {
     public static class YoutubeDlProcess
     {
+
+
         public static async Task StartDownload(VideoSource source)
         {
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
@@ -49,6 +51,8 @@ namespace youtube_dl_gui_wrapper
             return formats;
         }
 
+
+        //PUT THIS INTO ABSTRACT BASE CLASS? IT SHOULD BE THE SAME IN BOTH YOUTUBE-DL AND YT-DLP
         /// <summary>
         /// Executes youtube-dl.exe with passed in parameters.
         ///
