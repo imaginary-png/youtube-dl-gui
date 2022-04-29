@@ -15,22 +15,18 @@ namespace youtube_dl_gui_wrapper
             Console.WriteLine("Hello World!");
             var url = @"https://www.youtube.com/watch?v=Xpt9TyFzwJA";
 
-
             var source = new VideoSource(url);
 
             source.DownloadLog.PropertyChanged += Updated;
             source.Download();
 
-            Thread.Sleep(15000);
-
-            source.Cancel();
+            //await source.GetVideoFormats();
 
             Thread.Sleep(5000);
-            //source.Formats = YoutubeDlProcess.GetFormats(source.URL);
+            source.Cancel();
+
 
             source.Formats.ForEach(Console.WriteLine);
-
-
 
 
         }

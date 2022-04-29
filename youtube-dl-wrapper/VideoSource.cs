@@ -43,7 +43,8 @@ namespace youtube_dl_gui_wrapper
         /// </summary>
         public async Task GetVideoFormats()
         {
-            Formats = await YoutubeDlProcess.GetFormats(URL);
+            //Formats = await YoutubeDlProcess.GetFormats(URL);
+            Formats = await YtdlpProcess.GetFormats(URL);
         }
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace youtube_dl_gui_wrapper
             if (_isDownloading) return;
             _isDownloading = true;
             await YoutubeDlProcess.StartDownload(this);
+            //await YtdlpProcess.StartDownload(this);
         }
 
         /// <summary>

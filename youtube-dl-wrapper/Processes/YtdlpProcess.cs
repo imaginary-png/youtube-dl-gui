@@ -1,30 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui_wrapper
 {
-    public static class YoutubeDlProcess
+    /// <summary>
+    /// For use with yt-dlp <see cref="https://github.com/yt-dlp/yt-dlp"/>
+    /// </summary>
+    public class YtdlpProcess
     {
+        private string _exe;
+        private string _outputFolder;
+        private string _namingScheme = "%(title)s-%(id)s.%(ext)s";
 
-
-        public static async Task StartDownload(VideoSource source)
+        public YtdlpProcess(string exe = "yt-dlp.exe", string outputFolder = @"%USERPROFILE%\Desktop\")
+        {
+            _exe = exe;
+            _outputFolder = outputFolder;
+        }
+        public static async Task<bool> StartDownload(VideoSource source)
         {
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
-                if (args.Data == null || !args.Data.Contains("%")) return;
+                if (args.Data == null || 
+                    !(args.Data.Contains("[download]") &&   //if line doesn't contain strings [download] and %, e.g.,
+                      args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
-            var parameters = source.URL + " --newline";
-            await Execute(parameters, outputDel, null, token: source.Token);
+            var parameters = @"-o %USERPROFILE%\Desktop\%(title)s-%(id)s.%(ext)s " + source.URL + " --newline";
+            return await Execute(parameters, outputDel, null, token: source.Token);
         }
 
         /// <summary>
@@ -40,6 +49,7 @@ namespace youtube_dl_gui_wrapper
 
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
+                if (string.IsNullOrWhiteSpace(args.Data)) return;
                 formatOutputList.Add(args.Data);
             });
 
@@ -63,7 +73,7 @@ namespace youtube_dl_gui_wrapper
         /// <param name="errorDel">Handler for ErrorData events</param>
         /// <param name="token">Cancellation token</param>
         /// <returns></returns>
-        private static async Task Execute(string parameters, DataReceivedEventHandler outputDel = null, DataReceivedEventHandler errorDel = null, CancellationToken token = default)
+        private static async Task<bool> Execute(string parameters, DataReceivedEventHandler outputDel = null, DataReceivedEventHandler errorDel = null, CancellationToken token = default)
         {
             var errors = new List<string>();
 
@@ -75,14 +85,17 @@ namespace youtube_dl_gui_wrapper
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    FileName = "youtube-dl.exe", //load custom file location later... File.Exists()... from user config... etc.
+                    FileName = "yt-dlp.exe", //load custom file location later... File.Exists()... from user config... etc.
                     Arguments = parameters
                 };
 
                 p.OutputDataReceived += (sender, args) =>
-                {/*
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine($"Output: {args.Data}");
-                    Trace.WriteLine($"Output: {args.Data}");*/
+                    Console.ResetColor();
+                    Trace.WriteLine($"Output: {args.Data}");
                 };
                 p.OutputDataReceived += outputDel;
 
@@ -91,7 +104,12 @@ namespace youtube_dl_gui_wrapper
                 {
                     if (string.IsNullOrEmpty(args.Data)) return;
                     errors.Add(args.Data);
-                    //Console.WriteLine($"Error: {args.Data}|");
+
+                    /* Console.ForegroundColor = ConsoleColor.Cyan;
+                     Console.BackgroundColor = ConsoleColor.DarkGray;
+                     Console.WriteLine($"Error: {args.Data}|");
+                     Console.ResetColor();*/
+
                     Trace.WriteLine($"Error: {args.Data}|");
                 };
                 p.ErrorDataReceived += errorDel;
@@ -100,8 +118,9 @@ namespace youtube_dl_gui_wrapper
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
                 await p.WaitForExitAsync(token);
+                var exitCode = p.ExitCode;
 
-                if (errors.Count <= 0) return;
+                if (errors.Count <= 0) return p.ExitCode == 0 ? true : false;
 
                 string errMsg = "";
                 errors.ForEach(s =>
@@ -127,17 +146,23 @@ namespace youtube_dl_gui_wrapper
         private static List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
         {
             var videoFormats = new List<VideoFormat>();
+           
+            var toRemove = formatList.FindIndex( s => s.Contains("RESOLUTION"));
+            Console.WriteLine($"\nTO REMOVE {toRemove}\n");
 
-            formatList.RemoveRange(0, 3); //remove the first 3 lines as they are not relevant.
+            formatList.RemoveRange(0, toRemove+2); //remove lines that are not relevant.
+
+            formatList.ForEach(Console.WriteLine);
 
             foreach (var str in formatList)
             {
-                if (str == null) continue;
+                if (str.Contains("images")) continue;
                 var vf = GetVideoFormatFromString(str);
                 videoFormats.Add(vf);
             }
 
             return videoFormats;
+            return null;
         }
 
         /// <summary>
@@ -152,10 +177,10 @@ namespace youtube_dl_gui_wrapper
             var formatCode = split[0];
             var ext = split[1];
             var resolution = split[2];
-            var resolutionLabel = split[3];
+            var resolutionLabel = split[^2];
             var height = string.Empty;
             var width = string.Empty;
-            var fps = Regex.Match(formatStringArr, @"\d+fps").Groups[0].Value;
+            var fps = resolution == "audio" ? "" : split[3] + "fps"; //if 'resolution' is audio, no fps avail.
             var size = split[^1] == "(best)" ? "Unknown" : split[^1];
 
             if (resolution.Contains("x"))
@@ -173,12 +198,13 @@ namespace youtube_dl_gui_wrapper
 
         private static void UpdateDownloadInfo(DownloadInfo toUpdate, string info)
         {
+            Console.WriteLine(info);
             //Example output:
             //[download]   0.2% of 151.34MiB at 83.58KiB/s ETA 30:50
             var infoArr = Regex.Replace(info, @"\s+", " ").Split(" "); //get rid of extra spaces, then split
 
             var percent = infoArr[1];
-            var size = infoArr[3];
+            var size = infoArr[3].Replace("~", "");
             var speed = infoArr[5];
             var eta = infoArr[7];
 
