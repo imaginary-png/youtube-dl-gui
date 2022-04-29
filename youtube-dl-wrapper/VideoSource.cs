@@ -40,6 +40,26 @@ namespace youtube_dl_gui_wrapper
             _process = new YoutubeDlProcess();
         }
 
+        /// <summary>
+        /// Defaults to using youtube-dl
+        /// </summary>
+        /// <param name="url">Video URL</param>
+        /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
+        public VideoSource(string url, bool useYoutubeDL)
+        {
+            URL = url;
+            Formats = new List<VideoFormat>();
+            SelectedFormat = string.Empty;
+            DownloadLog = new DownloadInfo();
+            _cancelToken = new CancellationTokenSource();
+            Token = _cancelToken.Token;
+
+            if (useYoutubeDL) UseYoutubeDL();
+            else UseYTDLP();
+        }
+
+        
+
 
         /// <summary>
         /// Gets a list of available video formats.  
