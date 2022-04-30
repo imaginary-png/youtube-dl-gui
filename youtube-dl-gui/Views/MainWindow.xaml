@@ -1,0 +1,27 @@
+﻿<Window x:Class="youtube_dl_gui.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:youtube_dl_gui.Views"
+        xmlns:viewModels="clr-namespace:youtube_dl_gui.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800"
+
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True"
+        >
+
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Border Background="#1D1D2F"
+            CornerRadius="8">
+    <Grid>
+        <Label Foreground="AliceBlue" Content="{Binding Text}"></Label>
+    </Grid>
+    </Border>
+
+</Window>
