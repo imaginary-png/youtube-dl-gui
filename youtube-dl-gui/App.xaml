@@ -5,7 +5,9 @@
              xmlns:viewModels="clr-namespace:youtube_dl_gui.ViewModels"
              xmlns:views="clr-namespace:youtube_dl_gui.Views"
              StartupUri="Views/MainWindow.xaml">
+
     <Application.Resources>
+
         <DataTemplate DataType="{x:Type viewModels:MainWindowViewModel}">
             <views:MainWindow/>
         </DataTemplate>
@@ -16,5 +18,9 @@
             <views:SettingsView/>
         </DataTemplate>
 
+        
+            <SolidColorBrush x:Key="DynamicColor" Color="DarkCyan"/>
+        
     </Application.Resources>
+
 </Application>

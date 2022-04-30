@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:youtube_dl_gui.Views"
         xmlns:viewModels="clr-namespace:youtube_dl_gui.ViewModels"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="MainWindow" Height="1000" Width="1600"
-
+        FontSize="{Binding FontSize}"
+        Foreground="Azure"
+        
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True"
         >
+
     <WindowChrome.WindowChrome>
         <WindowChrome     
             CaptionHeight="1"  
@@ -36,8 +40,7 @@
         <Grid ShowGridLines="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="9*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="45"/>
@@ -62,17 +65,26 @@
             </Border>
 
             <!-- Side Panel-->
-
             <Button Grid.Row="2" Grid.Column="0"
-                    Width="60"
+                    Width="100"
                     Height="40" 
+                    FontSize="20"
+                    Margin="0 -150 0 0"
+                    Content="fontUP"
+                    Command="{Binding FontUpCommand}"/> 
+            
+            <Button Grid.Row="2" Grid.Column="0"
+                    Width="100"
+                    Height="40" 
+                    FontSize="20"
                     Content="downloads"
                     Command="{Binding ButtonCommand}"
                     CommandParameter="{Binding DownloadsPage}"/>
 
             <Button Grid.Row="2" Grid.Column="0"
-                    Width="60"
+                    Width="100"
                     Height="40" 
+                    FontSize="20"
                     Margin="0 150 0 0"
                     Content="settings"
                     Command="{Binding ButtonCommand}"

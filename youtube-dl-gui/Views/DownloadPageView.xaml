@@ -15,7 +15,7 @@
     <Grid Background="Chocolate">
         <Label HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               FontSize="50"
+               Foreground="{DynamicResource DynamicColor}"
                Content="{Binding Text}"/>
     </Grid>
 </UserControl>
