@@ -9,6 +9,12 @@
         <DataTemplate DataType="{x:Type viewModels:MainWindowViewModel}">
             <views:MainWindow/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:DownloadPageViewModel}">
+            <views:DownloadPageView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:SettingsViewModel}">
+            <views:SettingsView/>
+        </DataTemplate>
 
     </Application.Resources>
 </Application>

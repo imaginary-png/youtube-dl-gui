@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace youtube_dl_gui.Views
 {
@@ -10,6 +11,14 @@ namespace youtube_dl_gui.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
         }
     }
 }
