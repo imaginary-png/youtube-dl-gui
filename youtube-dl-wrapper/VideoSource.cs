@@ -88,6 +88,7 @@ namespace youtube_dl_gui_wrapper
         /// Gets a list of available video formats.  
         /// Throws ArgumentException if invalid URL.
         /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         public async Task GetVideoFormats()
         {
             Formats = await _process.GetFormats(URL);

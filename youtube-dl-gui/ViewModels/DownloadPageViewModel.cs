@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.VisualBasic.CompilerServices;
 using youtube_dl_gui.Commands;
@@ -13,6 +15,8 @@ namespace youtube_dl_gui.ViewModels
 {
     public class DownloadPageViewModel : BaseUserControlViewModel
     {
+        private bool UseYoutubeDL = false;
+
         public string InputText { get; set; }
         public ObservableCollection<VideoSource> Sources { get; set; }
         public List<string> URLS { get; set; }
@@ -26,7 +30,7 @@ namespace youtube_dl_gui.ViewModels
             URLS = new List<string>();
 
             TestCommand = new RelayCommand(p => TestCommand_Execute(), null);
-            AddURLsCommand = new RelayCommand(p => AddURLs_Execute(), null);
+            AddURLsCommand = new RelayCommand( p => AddURLs_Execute(), null);
 
 
             Sources.Add(new VideoSource("URL")
@@ -50,10 +54,40 @@ namespace youtube_dl_gui.ViewModels
 
         }
 
-        private void AddURLs_Execute()
+        private async Task AddURLs_Execute()
         {
             if (string.IsNullOrWhiteSpace(InputText)) return;
+            var errors = "";
 
+            var splitInput = InputText.Split(" ");
+
+
+            foreach (var s in splitInput)
+            {
+                if (Sources.FirstOrDefault(v => v.URL == s) != null) continue;
+
+                var videoSource = new VideoSource(s);
+                try
+                {
+                    await videoSource.GetVideoFormats();
+                    Sources.Add(videoSource);
+                }
+                catch (ArgumentException e)
+                {
+                    errors += e.Message+"\n";
+                }
+            }
+
+            if (errors.Length > 0)
+            {
+                MessageBox.Show($"Could not retrieve video information from the following:\n\n" +
+                                $"{errors}",
+                    "Error retrieving info from URLs",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+
+            InputText = "";
 
         }
         private void TestCommand_Execute()

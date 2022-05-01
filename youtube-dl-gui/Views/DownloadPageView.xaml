@@ -31,7 +31,7 @@
                 Background="#5FB9B0"
                 Foreground="#413D65"
                 Margin="0 0 0 0"
-            Command="{Binding FormatSelectedCommand}">
+            Command="{Binding AddURLsCommand}">
 
             <TextBlock FontSize="30"
                        Text="+"

@@ -56,14 +56,19 @@ namespace youtube_dl_gui_wrapper
         {
             var parameters = url + " -F";
             var formatOutputList = new List<string>();
+            var playlist = false;
 
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
                 if (string.IsNullOrWhiteSpace(args.Data)) return;
+                if (args.Data.Contains("playlist")) playlist = true;
                 formatOutputList.Add(args.Data);
             });
 
             await Execute(parameters, outputDel);
+
+            //ToDO
+            //do something else if the URL is a playlist....
 
             var formats = ExtractInfoForFormats(formatOutputList);
 
@@ -103,7 +108,7 @@ namespace youtube_dl_gui_wrapper
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine($"Output: {args.Data}");
                     Console.ResetColor();
-                    Trace.WriteLine($"Output: {args.Data}");
+                    //Trace.WriteLine($"Output: {args.Data}");
                 };
                 p.OutputDataReceived += outputDel;
 

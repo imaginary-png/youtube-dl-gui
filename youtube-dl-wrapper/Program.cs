@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.Tracing;
 using System.Threading;
@@ -15,21 +16,35 @@ namespace youtube_dl_gui_wrapper
             Console.WriteLine("Hello World!");
             var url = @"https://www.youtube.com/watch?v=Xpt9TyFzwJA";
 
-            var source = new VideoSource(url);
+            var vsl = new List<VideoSource>();
 
-            source.DownloadLog.PropertyChanged += Updated;
-            source.Download();
+            var vs1 = new VideoSource("https://www.youtube.com/watch?v=2VauFS071pg");
+            var vs2 = new VideoSource("https://www.youtube.com/watch?v=FewJRam0g4I");
+            var vs3 = new VideoSource("https://www.youtube.com/watch?v=9RJTQmK0YPI&list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb&index=11");
+            var vs4 = new VideoSource("https://docs.microsoft.com/en-us/xamarin/xamarin-forms/enterprise-application-patterns/mvvm");
 
-            //await source.GetVideoFormats();
-
-            Thread.Sleep(5000);
-            source.Cancel();
-
-            //source.Formats.ForEach(Console.WriteLine);
-
-            YtdlpProcess x = new YtdlpProcess();
+            vsl.Add(vs1);
+            vsl.Add(vs2);
+            vsl.Add(vs3);
+            vsl.Add(vs4);
 
 
+            vsl.ForEach(v =>
+            {
+                try
+                {
+                    v.GetVideoFormats();
+                    Thread.Sleep(5000);
+                }
+                catch (ArgumentException e)
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\n\n============================================================\n{e.Message}\n=========================================================================\n\n");
+                    Console.ResetColor();
+                }
+            });
+
+            Thread.Sleep(60000);
         }
 
         public static async Task Start(VideoSource source)
