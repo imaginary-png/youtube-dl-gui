@@ -76,6 +76,40 @@ namespace youtube_dl_gui_wrapper
             return formats;
         }
 
+        public async Task<string> GetFileName(string url)
+        {
+            var parameters = url + " --get-filename";
+            var filename = string.Empty;
+            var outputDel = new DataReceivedEventHandler(((sender, args) =>
+            {
+                if (string.IsNullOrEmpty(filename)) filename += args.Data;
+                Trace.WriteLine($"\n\n===========================" +
+                                $"filename: {filename}\n" +
+                                $"args.data: {args.Data}\n" +
+                                $"================================");
+            }));
+
+            await Execute(parameters, outputDel);
+            return filename;
+        }
+        
+        public async Task<string> GetDuration(string url)
+        {
+            var parameters = url + " --get-duration";
+            var duration = string.Empty;
+            var outputDel = new DataReceivedEventHandler(((sender, args) =>
+            {
+                if (string.IsNullOrEmpty(duration)) duration += args.Data;
+                Trace.WriteLine($"\n\n===========================" +
+                                $"filename: {duration}\n" +
+                                $"args.data: {args.Data}\n" +
+                                $"================================");
+            }));
+
+            await Execute(parameters, outputDel);
+            return duration;
+        }
+
         /// <summary>
         /// Executes youtube-dl.exe with passed in parameters.
         ///
@@ -98,16 +132,16 @@ namespace youtube_dl_gui_wrapper
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    FileName = "yt-dlp.exe", //load custom file location later... File.Exists()... from user config... etc.
+                    FileName = Exe, //load custom file location later... File.Exists()... from user config... etc.
                     Arguments = parameters
                 };
 
                 p.OutputDataReceived += (sender, args) =>
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                  /*  Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine($"Output: {args.Data}");
-                    Console.ResetColor();
+                    Console.ResetColor();*/
                     //Trace.WriteLine($"Output: {args.Data}");
                 };
                 p.OutputDataReceived += outputDel;

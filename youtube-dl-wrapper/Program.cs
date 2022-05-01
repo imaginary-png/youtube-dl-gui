@@ -20,7 +20,7 @@ namespace youtube_dl_gui_wrapper
 
             var vs1 = new VideoSource("https://www.youtube.com/watch?v=2VauFS071pg");
             var vs2 = new VideoSource("https://www.youtube.com/watch?v=FewJRam0g4I");
-            var vs3 = new VideoSource("https://www.youtube.com/watch?v=9RJTQmK0YPI&list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb&index=11");
+            var vs3 = new VideoSource("");
             var vs4 = new VideoSource("https://docs.microsoft.com/en-us/xamarin/xamarin-forms/enterprise-application-patterns/mvvm");
 
             vsl.Add(vs1);
@@ -28,25 +28,24 @@ namespace youtube_dl_gui_wrapper
             vsl.Add(vs3);
             vsl.Add(vs4);
 
-
-            vsl.ForEach(v =>
+            try
             {
-                try
-                {
-                    v.GetVideoFormats();
-                    Thread.Sleep(5000);
-                }
-                catch (ArgumentException e)
-                {
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\n\n============================================================\n{e.Message}\n=========================================================================\n\n");
-                    Console.ResetColor();
-                }
-            });
+                await Start1(vsl);
+            }
+            catch (ArgumentException e)
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\n\n============================================================\n{e.Message}\n=========================================================================\n\n");
+                Console.ResetColor();
+            }
 
-            Thread.Sleep(60000);
+            Thread.Sleep(10000);
         }
 
+        public static async Task Start1(List<VideoSource> vsl)
+        {
+            vsl.ForEach(async vs => await Start(vs));
+        }
         public static async Task Start(VideoSource source)
         {
             try
@@ -55,7 +54,9 @@ namespace youtube_dl_gui_wrapper
             }
             catch (ArgumentException e)
             {
-                Console.WriteLine(e.Message);
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\n\n============================================================\n{e.Message}\n=========================================================================\n\n");
+                Console.ResetColor();
             }
         }
 

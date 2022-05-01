@@ -62,7 +62,7 @@ namespace youtube_dl_gui_wrapper
             var formatCode = split[0];
             var ext = split[1];
             var resolution = split[2];
-            var resolutionLabel = split[3];
+            var resolutionLabel = resolution == "audio"? "audio" : split[3];
             var height = string.Empty;
             var width = string.Empty;
             var fps = Regex.Match(formatStringArr, @"\d+fps").Groups[0].Value;

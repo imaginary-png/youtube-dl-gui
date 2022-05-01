@@ -57,7 +57,6 @@ namespace youtube_dl_gui_wrapper
             }
 
             return videoFormats;
-            return null;
         }
 
         

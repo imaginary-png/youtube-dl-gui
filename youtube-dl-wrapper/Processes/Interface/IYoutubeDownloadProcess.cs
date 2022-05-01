@@ -15,11 +15,25 @@ namespace youtube_dl_gui_wrapper
         Task<bool> StartDownload(VideoSource source);
 
         /// <summary>
-        /// Returns a list of <see cref="VideoFormat"/>. Uses arg "youtube-dl -F"  
+        /// Returns a list of <see cref="VideoFormat"/>. Uses arg "-F"  
         /// </summary>
         /// <exception cref="System.ArgumentException"></exception>
         /// <param name="url">The URL of the video</param>
         /// <returns>A List of available video formats</returns>
         Task<List<VideoFormat>> GetFormats(string url);
+
+        /// <summary>
+        /// Returns name of video. Uses arg "--get-filename"
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        Task<string> GetFileName(string url);
+
+        /// <summary>
+        /// Returns Duration of video. Uses arg "--get-filename"
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        Task<string> GetDuration(string url);
     }
 }

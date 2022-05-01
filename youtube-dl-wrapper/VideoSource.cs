@@ -21,6 +21,8 @@ namespace youtube_dl_gui_wrapper
         private string _selectedFormat;
 
         public string URL { get; set; }
+        public string FileName { get; set; }
+        public string Duration { get; set; }
 
         public List<VideoFormat> Formats
         {
@@ -55,12 +57,15 @@ namespace youtube_dl_gui_wrapper
         public VideoSource(string url)
         {
             URL = url;
+            FileName = String.Empty;
+            Duration = String.Empty;
             Formats = new List<VideoFormat>();
             SelectedFormat = string.Empty;
             DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
             Token = _cancelToken.Token;
             _process = new YoutubeDlProcess();
+            //_process = new YtdlpProcess();
         }
 
         /// <summary>
@@ -92,6 +97,15 @@ namespace youtube_dl_gui_wrapper
         public async Task GetVideoFormats()
         {
             Formats = await _process.GetFormats(URL);
+        }
+
+        public async Task GetFileName()
+        {
+            FileName = await _process.GetFileName(URL);
+        }
+        public async Task GetDuration()
+        {
+            Duration = await _process.GetDuration(URL);
         }
 
 

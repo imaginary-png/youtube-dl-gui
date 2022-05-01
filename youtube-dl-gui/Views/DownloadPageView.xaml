@@ -15,6 +15,7 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="5*"/>
+            <RowDefinition Height="0.5*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*"/>
@@ -53,12 +54,17 @@
                   HeadersVisibility="Column"
                   ColumnHeaderHeight="25"
                   FontSize="12"
+                  IsReadOnly="True"
                   ItemsSource="{Binding Sources}">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="URL"
+                <DataGridTextColumn Header="Name"
                                     Width="6*"
-                                    Binding="{Binding URL}"></DataGridTextColumn>
+                                    Binding="{Binding FileName}"></DataGridTextColumn>
+
+                <DataGridTextColumn Header="Duration"
+                                    Width="*"
+                                    Binding="{Binding Duration}"></DataGridTextColumn>
 
                 <DataGridTextColumn Header="%"
                                     Width=".5*"
@@ -101,6 +107,28 @@
 
             </DataGrid.Columns>
         </DataGrid>
+
+        <Button Grid.Row="3" Grid.Column="1"
+                Width="20" Height="20"
+                BorderThickness="0"
+                Background="#5FB9B0"
+                Foreground="#413D65"
+                Margin="0 0 0 0"
+                Command="{Binding ToggleDownloadCommand}">
+
+            <TextBlock FontSize="18"
+                       Text="V"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0 -12 0 -10"/>
+
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="2 2 2 2"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+
 
     </Grid>
 </UserControl>
