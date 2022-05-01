@@ -7,7 +7,7 @@ using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui_wrapper.Models
 {
-    public class DownloadInfo : INotifyPropertyChanged
+    public class DownloadInfo : ObservableObject
     {
         private string _downloadPercentage;
         private string _downloadSpeed;
@@ -77,19 +77,11 @@ namespace youtube_dl_gui_wrapper.Models
 
         private void UpdateTotalDownloaded()
         {
-            if (_fileSize == string.Empty || _downloadPercentage == string.Empty) return;
+            if (string.IsNullOrEmpty(_fileSize) || _downloadPercentage == string.Empty) return;
             string unit = _fileSize.Substring(_fileSize.Length - 3); 
             double percent = Double.Parse(_downloadPercentage.Replace("%", ""));
             double size = Double.Parse(_fileSize.Remove(_fileSize.Length - 3));
             Downloaded = (Math.Round(percent/100 * size,2)).ToString(CultureInfo.InvariantCulture)+ unit;
-        }
-        
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public override string ToString()

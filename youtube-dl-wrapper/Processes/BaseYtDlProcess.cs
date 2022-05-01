@@ -46,7 +46,8 @@ namespace youtube_dl_gui_wrapper
                       args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
-            var parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL + " --newline";
+            //currently hardcoded to assume selected format is a height value, not an actual format code. 
+            var parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL + $" -f \"bestvideo[width={source.SelectedFormat}]+ba\" --newline";
             return await Execute(parameters, outputDel, null, token: source.Token);
         }
 

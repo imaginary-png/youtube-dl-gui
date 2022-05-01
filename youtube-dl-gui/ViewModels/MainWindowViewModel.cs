@@ -36,9 +36,9 @@ namespace youtube_dl_gui.ViewModels
         public ICommand ButtonCommand { get; set; }
         public ICommand FontUpCommand { get; set; }
 
-        public ObservableCollection<VideoSource> Sources { get; set; }
-        public List<string> URLS { get; set; }
 
+
+        public string Text { get; set; }
 
         public MainWindowViewModel()
         {
@@ -46,17 +46,13 @@ namespace youtube_dl_gui.ViewModels
             SettingsPage = new SettingsViewModel();
             CurrentView = DownloadsPage;
 
-            Sources = new ObservableCollection<VideoSource>();
-            URLS = new List<string>();
-
-            ButtonCommand = new RelayCommand(p=>ChangeView((BaseUserControlViewModel)p), p => p is BaseUserControlViewModel);
+            ButtonCommand = new RelayCommand(p => ChangeView((BaseUserControlViewModel)p), p => p is BaseUserControlViewModel);
         }
 
 
 
         private void ChangeView(BaseUserControlViewModel viewModel)
         {
-            Trace.WriteLine(viewModel == DownloadsPage);
             if (viewModel == CurrentView) return;
 
             if (viewModel == DownloadsPage)
@@ -71,7 +67,7 @@ namespace youtube_dl_gui.ViewModels
                 return;
             }
         }
-        
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

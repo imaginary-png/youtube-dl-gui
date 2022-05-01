@@ -43,5 +43,6 @@ namespace youtube_dl_gui.Views
             d.SetData(DataFormats.Text, text);
             e.DataObject = d;
         }
+        
     }
 }

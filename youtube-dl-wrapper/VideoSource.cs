@@ -12,19 +12,42 @@ using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui_wrapper
 {
-    public class VideoSource
+    public class VideoSource : ObservableObject
     {
         private readonly CancellationTokenSource _cancelToken;
         private bool _isDownloading = false;
         private IYoutubeDownloadProcess _process;
+        private List<VideoFormat> _formats;
+        private string _selectedFormat;
 
         public string URL { get; set; }
-        public List<VideoFormat> Formats { get; set; }
-        public string SelectedFormat { get; set; }
+
+        public List<VideoFormat> Formats
+        {
+            get => _formats;
+            set
+            {
+                if (Equals(value, _formats)) return;
+                _formats = value;
+                OnPropertyChanged(nameof(Formats));
+            }
+        }
+
+        public string SelectedFormat
+        {
+            get => _selectedFormat;
+            set
+            {
+                if (value == _selectedFormat) return;
+                _selectedFormat = value;
+                OnPropertyChanged(nameof(SelectedFormat));
+            }
+        }
+
         public DownloadInfo DownloadLog { get; private set; }
         public CancellationToken Token { get; private set; }
 
-        
+
         /// <summary>
         /// Defaults to using youtube-dl
         /// </summary>
@@ -58,7 +81,7 @@ namespace youtube_dl_gui_wrapper
             else UseYTDLP();
         }
 
-        
+
 
 
         /// <summary>
@@ -69,6 +92,7 @@ namespace youtube_dl_gui_wrapper
         {
             Formats = await _process.GetFormats(URL);
         }
+
 
         /// <summary>
         /// Starts youtube-dl download process
@@ -115,6 +139,34 @@ namespace youtube_dl_gui_wrapper
         {
             _process = new YoutubeDlProcess();
         }
+
+        #region Format Selection 
+
+        /// <summary>
+        /// Sets the <see cref="SelectedFormat"/> based on resolution (highest Height) instead of using format code.
+        /// </summary>
+        public void SelectBestResolution()
+        {
+            SelectedFormat = "0";
+
+            if (Formats == null) return;
+            if (Formats.Count == 0) return;
+            
+            foreach (var videoFormat in Formats)
+            {
+                if (string.IsNullOrWhiteSpace(videoFormat.Height)) continue;
+                try
+                {
+                    if (int.Parse(videoFormat.Height) > (int.Parse(SelectedFormat))) SelectedFormat = videoFormat.Height;
+                }
+                catch
+                {
+                    //should be safe to ignore, since it'll just skip it. no big deal.
+                }
+            }
+        }
+
+        #endregion
 
     }
 }

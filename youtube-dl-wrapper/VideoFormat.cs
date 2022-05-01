@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace youtube_dl_gui_wrapper
 {
@@ -13,6 +14,17 @@ namespace youtube_dl_gui_wrapper
         public string Fps { get; set; }
         public string FileSize { get; set; }
 
+        public VideoFormat()
+        {
+            FormatCode = String.Empty;
+            Extension = String.Empty;
+            Resolution = String.Empty;
+            ResolutionLabel = String.Empty;
+            Height = "0";
+            Width = "0";
+            Fps = String.Empty;
+            FileSize = String.Empty;
+        }
 
         public VideoFormat(string formatCode, string extension, string resolution, string resolutionLabel, string height, string width, string fps)
         {
