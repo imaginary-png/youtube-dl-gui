@@ -20,9 +20,28 @@ namespace youtube_dl_gui.Views
     /// </summary>
     public partial class DownloadPageView : UserControl
     {
+
         public DownloadPageView()
         {
             InitializeComponent();
+            var tb = InputTextBox;
+            DataObject.AddPastingHandler(tb, OnPaste);
+        }
+
+        //add a space to the input text, if pasted.
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+            if (!isText) return;
+
+            var text = e.SourceDataObject.GetData(DataFormats.UnicodeText) as string;
+            
+            if (text == null) return;
+            if (text.EndsWith(" ")) return;
+            text += " ";
+            DataObject d = new DataObject();
+            d.SetData(DataFormats.Text, text);
+            e.DataObject = d;
         }
     }
 }

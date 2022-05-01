@@ -13,9 +13,15 @@
     </UserControl.DataContext>
 
     <Grid Background="Chocolate">
-        <Label HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Foreground="{DynamicResource DynamicColor}"
-               Content="{Binding Text}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBox Grid.Row="0" TextWrapping="Wrap" x:Name="InputTextBox" >
+
+        </TextBox>
+
+
     </Grid>
 </UserControl>

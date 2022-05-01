@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace youtube_dl_gui.Commands
 {
-    public class RelayCommand : ICommand
+    public class RelayCommand : ICommand //https://docs.microsoft.com/en-us/archive/msdn-magazine/2009/february/patterns-wpf-apps-with-the-model-view-viewmodel-design-pattern#relaying-command-logic
     {
         #region Fields 
         readonly Action<object> _execute;
