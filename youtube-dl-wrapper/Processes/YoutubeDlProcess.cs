@@ -71,8 +71,8 @@ namespace youtube_dl_gui_wrapper
             if (resolution.Contains("x"))
             {
                 var heightxwidth = resolution.Split("x");
-                height = heightxwidth[0];
-                width = heightxwidth[1];
+                width = heightxwidth[0];
+                height = heightxwidth[1];
             }
 
             return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps, size);

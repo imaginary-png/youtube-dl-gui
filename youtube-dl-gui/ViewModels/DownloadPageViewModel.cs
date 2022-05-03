@@ -19,8 +19,9 @@ namespace youtube_dl_gui.ViewModels
 {
     public class DownloadPageViewModel : BaseUserControlViewModel, INotifyPropertyChanged
     {
-        private bool UseYoutubeDL = false;
         private string _inputText;
+        private bool _useYoutubeDl = false;
+        private bool _bulkDownload = false;
 
 
         public string InputText
@@ -37,9 +38,32 @@ namespace youtube_dl_gui.ViewModels
         public ObservableCollection<VideoSource> Sources { get; set; }
         public List<string> URLS { get; set; }
 
+        public bool UseYoutubeDl
+        {
+            get => _useYoutubeDl;
+            set
+            {
+                if (value == _useYoutubeDl) return;
+                _useYoutubeDl = value;
+                OnPropertyChanged(nameof(UseYoutubeDl));
+            }
+        }
+
+        public bool BulkDownload
+        {
+            get => _bulkDownload;
+            set
+            {
+                if (value == _bulkDownload) return;
+                _bulkDownload = value;
+                OnPropertyChanged(nameof(BulkDownload));
+            }
+        }
+
         public ICommand TestCommand { get; set; }
         public ICommand AddURLsCommand { get; set; }
         public ICommand ToggleDownloadCommand { get; set; }
+
 
         public DownloadPageViewModel()
         {
@@ -48,8 +72,8 @@ namespace youtube_dl_gui.ViewModels
 
             TestCommand = new RelayCommand(p => TestCommand_Execute(), null);
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
-            ToggleDownloadCommand = new RelayCommand(ToggleDownload_Execute(), null);
-
+            ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
+            
 
             Sources.Add(new VideoSource("URL")
             {
@@ -57,7 +81,64 @@ namespace youtube_dl_gui.ViewModels
                 Duration = "1234",
                 DownloadLog =
                 {
-                    Downloaded = "222220", DownloadPercentage = "2220", DownloadSpeed = "2220", ETA = "30224s",
+                    Downloaded = "222220", DownloadPercentage = "25%", DownloadSpeed = "2220", ETA = "30224s",
+                    FileSize = "2274MiB"
+                },
+                Formats = new List<VideoFormat>
+                {
+                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
+                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
+                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
+                },
+                SelectedFormat = "360",
+                URL = "LOL1"
+
+            });
+            Sources.Add(new VideoSource("URL")
+            {
+                FileName = "hello",
+                Duration = "1234",
+                DownloadLog =
+                {
+                    Downloaded = "222220", DownloadPercentage = "100%", DownloadSpeed = "2220", ETA = "30224s",
+                    FileSize = "2274MiB"
+                },
+                Formats = new List<VideoFormat>
+                {
+                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
+                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
+                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
+                },
+                SelectedFormat = "360",
+                URL = "LOL1"
+
+            });
+            Sources.Add(new VideoSource("URL")
+            {
+                FileName = "hello",
+                Duration = "1234",
+                DownloadLog =
+                {
+                    Downloaded = "222220", DownloadPercentage = "", DownloadSpeed = "2220", ETA = "30224s",
+                    FileSize = "2274MiB"
+                },
+                Formats = new List<VideoFormat>
+                {
+                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
+                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
+                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
+                },
+                SelectedFormat = "360",
+                URL = "LOL1"
+
+            });
+            Sources.Add(new VideoSource("URL")
+            {
+                FileName = "hello",
+                Duration = "1234",
+                DownloadLog =
+                {
+                    Downloaded = "222220", DownloadPercentage = "0%", DownloadSpeed = "2220", ETA = "30224s",
                     FileSize = "2274MiB"
                 },
                 Formats = new List<VideoFormat>
@@ -91,7 +172,10 @@ namespace youtube_dl_gui.ViewModels
 
                 usedUrls.Add(s);
 
-                var videoSource = new VideoSource(s);
+                // using yt-dlp as default, since youtube-dl has slow dl for youtube.
+                // using height for video download to simplify GUI functionality.
+                var videoSource = new VideoSource(s, UseYoutubeDl, true); 
+
                 //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats
                 //it uses a lot of cpu and mem
                 await GetVideoData(videoSource);
@@ -101,8 +185,8 @@ namespace youtube_dl_gui.ViewModels
 
         private void ToggleDownload_Execute()
         {
-            //ToDo
-            //Start Download, one by one, and in bulk option
+            if (BulkDownload) DownloadInBulk();
+            else DownloadOneByOne();
         }
 
         private void TestCommand_Execute()
@@ -132,6 +216,9 @@ namespace youtube_dl_gui.ViewModels
 
 
         #region Helpers
+
+        #region Video from URL helpers
+        
         /// <summary>
         /// Helper for getting video information.
         /// </summary>
@@ -145,6 +232,8 @@ namespace youtube_dl_gui.ViewModels
                 await Task.WhenAll(videoSource.GetFileName(),
                     videoSource.GetDuration(),
                     videoSource.GetVideoFormats());
+
+                SimplifyFormatsToUniqueResolutionsOnly(videoSource);
                 Sources.Add(videoSource);
             }
             catch (ArgumentException e)
@@ -169,10 +258,68 @@ namespace youtube_dl_gui.ViewModels
         /// Instead of showing information for each resolution - bitrate - container, etc.
         /// </summary>
         /// <param name="source"></param>
-        private void SimplifyFormats(VideoSource source)
+        private void SimplifyFormatsToUniqueResolutionsOnly(VideoSource source)
         {
             //ToDo
+            var resolutions = new List<string>();
+
+            //get a list of available resolutions based on height, e.g., 1920x1080 = 1080p, 2560x1440 = 1440p
+            source.Formats.ForEach(f =>
+            {
+                if (!resolutions.Contains(f.Height))
+                {
+                    resolutions.Add(f.Height);
+                }
+            });
+            //assign new available formats
+            var tempList = new List<VideoFormat>();
+            resolutions.ForEach(s =>
+            {
+                var vf = new VideoFormat
+                {
+                    Height = s == string.Empty ? "audio" : s,
+                    Resolution = s,
+                    ResolutionLabel = s == string.Empty ? "audio" : s + "p"
+                };
+                tempList.Add(vf);
+            });
+            tempList.Reverse();
+            source.Formats = tempList;
         }
+
+        #endregion
+
+        #region Download helpers
+
+        public async Task DownloadOneByOne()
+        {
+            foreach (var vs in Sources)
+            {
+                await vs.Download();
+            }
+        }
+
+        public async Task DownloadInBulk()
+        {
+            var queueList = new List<Task>();
+
+            foreach (var vs in Sources)
+            {
+                queueList.Add(vs.Download());
+            }
+
+            while (queueList.Any())
+            {
+                var finTask = await Task.WhenAny(queueList);
+                queueList.Remove(finTask);
+            }
+
+        }
+
+        #endregion
+
+
+
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;

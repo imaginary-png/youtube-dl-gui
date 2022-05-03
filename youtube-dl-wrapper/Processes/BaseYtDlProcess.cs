@@ -36,8 +36,8 @@ namespace youtube_dl_gui_wrapper
             }
         }
         
-        public async Task<bool> StartDownload(VideoSource source)
-        {
+        public async Task<bool> StartDownload(VideoSource source, bool useHeight = false)
+        {            
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
@@ -47,7 +47,19 @@ namespace youtube_dl_gui_wrapper
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
             //currently hardcoded to assume selected format is a height value, not an actual format code. 
-            var parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL + $" -f \"bestvideo[width={source.SelectedFormat}]+ba\" --newline";
+            string parameters;
+
+            if (useHeight)
+            {
+                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                             $" -f \"bestvideo[width={source.SelectedFormat}]+ba\" --newline";
+            }
+            else
+            {
+                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                             $" -f {source.SelectedFormat} --newline";
+            }
+
             return await Execute(parameters, outputDel, null, token: source.Token);
         }
 
@@ -78,6 +90,7 @@ namespace youtube_dl_gui_wrapper
 
         public async Task<string> GetFileName(string url)
         {
+
             var parameters = url + " --get-filename";
             var filename = string.Empty;
             var outputDel = new DataReceivedEventHandler(((sender, args) =>

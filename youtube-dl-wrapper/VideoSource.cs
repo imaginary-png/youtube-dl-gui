@@ -23,6 +23,7 @@ namespace youtube_dl_gui_wrapper
         public string URL { get; set; }
         public string FileName { get; set; }
         public string Duration { get; set; }
+        public bool UseHeightForDownload { get; set; }
 
         public List<VideoFormat> Formats
         {
@@ -53,8 +54,10 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Defaults to using youtube-dl
         /// </summary>
-        /// <param name="url"></param>
-        public VideoSource(string url)
+        /// <param name="url">Video URL</param>
+        /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
+        /// <param name="useHeightForDownload">Use height as basis for video download, not format code</param>
+        public VideoSource(string url, bool useYoutubeDL = true, bool useHeightForDownload = false)
         {
             URL = url;
             FileName = String.Empty;
@@ -64,23 +67,7 @@ namespace youtube_dl_gui_wrapper
             DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
             Token = _cancelToken.Token;
-            _process = new YoutubeDlProcess();
-            //_process = new YtdlpProcess();
-        }
-
-        /// <summary>
-        /// Defaults to using youtube-dl
-        /// </summary>
-        /// <param name="url">Video URL</param>
-        /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
-        public VideoSource(string url, bool useYoutubeDL)
-        {
-            URL = url;
-            Formats = new List<VideoFormat>();
-            SelectedFormat = string.Empty;
-            DownloadLog = new DownloadInfo();
-            _cancelToken = new CancellationTokenSource();
-            Token = _cancelToken.Token;
+            UseHeightForDownload = useHeightForDownload;
 
             if (useYoutubeDL) UseYoutubeDL();
             else UseYTDLP();
@@ -116,8 +103,9 @@ namespace youtube_dl_gui_wrapper
         {
             if (_isDownloading) return;
             _isDownloading = true;
-            await _process.StartDownload(this);
+            await _process.StartDownload(this, UseHeightForDownload);
         }
+
 
         /// <summary>
         /// Cancels Download
@@ -166,7 +154,7 @@ namespace youtube_dl_gui_wrapper
 
             if (Formats == null) return;
             if (Formats.Count == 0) return;
-            
+
             foreach (var videoFormat in Formats)
             {
                 if (string.IsNullOrWhiteSpace(videoFormat.Height)) continue;

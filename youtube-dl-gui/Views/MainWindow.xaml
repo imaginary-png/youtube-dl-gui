@@ -13,11 +13,12 @@
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True"
+        ResizeMode="CanResize"
         >
 
     <WindowChrome.WindowChrome>
         <WindowChrome     
-            CaptionHeight="1"  
+            CaptionHeight="0"  
             CornerRadius ="0"
             ResizeBorderThickness="4"         
             GlassFrameThickness="0">
@@ -34,7 +35,13 @@
     </Window.Resources>
 
     <Border Background="#413D65"
+            BorderThickness="0"
+            BorderBrush="Gainsboro"
             CornerRadius="{StaticResource WindowCornerRadiusWindow}">
+        <Border.Effect>
+            <DropShadowEffect/>
+        </Border.Effect>
+ 
 
         <Grid ShowGridLines="True">
             <Grid.ColumnDefinitions>
