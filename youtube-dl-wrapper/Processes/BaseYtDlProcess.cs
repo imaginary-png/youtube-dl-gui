@@ -44,15 +44,21 @@ namespace youtube_dl_gui_wrapper
                 if (args.Data == null ||
                     !(args.Data.Contains("[download]") &&   //if line doesn't contain strings [download] and %, e.g.,
                       args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
+                if (args.Data.Contains("in")) return;          //last line of finished download is: [download] 100% of 115.06MiB in 00:10, ignore.
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
             //currently hardcoded to assume selected format is a height value, not an actual format code. 
             string parameters;
 
-            if (useHeight)
+            if (source.SelectedFormat == "audio")
             {
                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
-                             $" -f \"bestvideo[width={source.SelectedFormat}]+ba\" --newline";
+                             $" -f \"ba\" --newline"; //bestaudio
+            }
+            else if (useHeight)
+            {
+                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                             $" -f \"bestvideo[height={source.SelectedFormat}]+ba\" --newline";
             }
             else
             {
@@ -96,7 +102,7 @@ namespace youtube_dl_gui_wrapper
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
             {
                 if (string.IsNullOrEmpty(filename)) filename += args.Data;
-                Trace.WriteLine($"\n\n===========================" +
+                Trace.WriteLine($"\n\n===========================\n" +
                                 $"filename: {filename}\n" +
                                 $"args.data: {args.Data}\n" +
                                 $"================================");
@@ -113,7 +119,7 @@ namespace youtube_dl_gui_wrapper
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
             {
                 if (string.IsNullOrEmpty(duration)) duration += args.Data;
-                Trace.WriteLine($"\n\n===========================" +
+                Trace.WriteLine($"\n\n===========================\n" +
                                 $"filename: {duration}\n" +
                                 $"args.data: {args.Data}\n" +
                                 $"================================");
@@ -135,6 +141,9 @@ namespace youtube_dl_gui_wrapper
         /// <returns></returns>
         protected async Task<bool> Execute(string parameters, DataReceivedEventHandler outputDel = null, DataReceivedEventHandler errorDel = null, CancellationToken token = default)
         {
+            Trace.WriteLine($"\n\n======================================\n" +
+                            $"Using these params: {parameters}\n" +
+                            $"======================================");
             var errors = new List<string>();
 
             using (var p = new Process())

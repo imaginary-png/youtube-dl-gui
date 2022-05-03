@@ -70,9 +70,9 @@ namespace youtube_dl_gui_wrapper
 
             if (resolution.Contains("x"))
             {
-                var heightxwidth = resolution.Split("x");
-                width = heightxwidth[0];
-                height = heightxwidth[1];
+                var widthXheight = resolution.Split("x");
+                width = widthXheight[0];
+                height = widthXheight[1];
             }
 
             return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps, size);
@@ -88,6 +88,13 @@ namespace youtube_dl_gui_wrapper
             var infoArr = Regex.Replace(info, @"\s+", " ").Split(" "); //get rid of extra spaces, then split
 
             var percent = infoArr[1];
+            //for edge case issue where the final line can be cut short resulting index out of range.
+            if (percent == "100%")
+            {
+                toUpdate.DownloadPercentage = percent;
+                return;
+            };
+
             var size = infoArr[3].Replace("~", "");
             var speed = infoArr[5];
             var eta = infoArr[7];

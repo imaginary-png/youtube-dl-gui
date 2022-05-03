@@ -55,48 +55,53 @@
                   ColumnHeaderHeight="25"
                   FontSize="12"
                   IsReadOnly="True"
-                  ItemsSource="{Binding Sources}">
+                  ItemsSource="{Binding Jobs}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"
                                     Width="6*"
-                                    Binding="{Binding FileName}"></DataGridTextColumn>
+                                    Binding="{Binding Source.FileName}"></DataGridTextColumn>
 
                 <DataGridTextColumn Header="Duration"
                                     Width="*"
-                                    Binding="{Binding Duration}"></DataGridTextColumn>
+                                    Binding="{Binding Source.Duration}"></DataGridTextColumn>
 
                 <DataGridTextColumn Header="%"
                                     Width=".5*"
-                                    Binding="{Binding DownloadLog.DownloadPercentage}"></DataGridTextColumn>
+                                    Binding="{Binding Source.DownloadLog.DownloadPercentage}"></DataGridTextColumn>
 
                 <DataGridTextColumn Header="Size"
                                     Width="*"
-                                    Binding="{Binding DownloadLog.FileSize}"></DataGridTextColumn>
+                                    Binding="{Binding Source.DownloadLog.FileSize}"></DataGridTextColumn>
 
 
                 <DataGridTextColumn Header="Speed"
                                     Width="*"
-                                    Binding="{Binding DownloadLog.DownloadSpeed}"></DataGridTextColumn>
+                                    Binding="{Binding Source.DownloadLog.DownloadSpeed}"></DataGridTextColumn>
 
 
                 <DataGridTextColumn Header="ETA"
                                     Width="*"
-                                    Binding="{Binding DownloadLog.ETA}"></DataGridTextColumn>
+                                    Binding="{Binding Source.DownloadLog.ETA}"></DataGridTextColumn>
+
+                <DataGridTextColumn Header="Status"
+                                    Width="*"
+                                    Binding="{Binding Status}"></DataGridTextColumn>
 
                 <DataGridTextColumn Header="Selected"
                                     Width="*"
-                                    Binding="{Binding SelectedFormat}"></DataGridTextColumn>
+                                    Binding="{Binding Source.SelectedFormat}"></DataGridTextColumn>
 
 
                 <DataGridTemplateColumn Header="Formats">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <!-- Why doesn't it update on propertychanged implicitly? When would you not want a users selection to update immediately? Why did I spend 4+ hours on this combobox -->
-                            <ComboBox ItemsSource="{Binding Formats}"
+                            <ComboBox ItemsSource="{Binding Source.Formats}"
+                                      SelectedItem="{Binding Source.Formats[0] }"
                                       IsEditable="False"
                                       IsReadOnly="True"
-                                      SelectedValue="{Binding SelectedFormat, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedValue="{Binding Source.SelectedFormat, UpdateSourceTrigger=PropertyChanged}"
                                       SelectedValuePath="Height"
                                       DisplayMemberPath="ResolutionLabel">
                                 <!-- Selected value is based on height, because to keep things simple we're just downloading videos based on resolution @ 'best'  -->
@@ -109,20 +114,47 @@
 
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
+
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding DownloadLog.DownloadPercentage}" Value="">
+                        <DataTrigger Binding="{Binding Status}" Value="Waiting">
                             <Setter Property="Background" Value="DarkGray"></Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding DownloadLog.DownloadPercentage}" Value="0%">
+                        <DataTrigger Binding="{Binding Status}" Value="Downloading">
                             <Setter Property="Background" Value="LightGreen"></Setter>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding DownloadLog.DownloadPercentage}" Value="100%">
+                        <DataTrigger Binding="{Binding Status}" Value="Success">
                             <Setter Property="Background" Value="MediumSeaGreen"></Setter>
                         </DataTrigger>
+
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                        </Trigger>
+
                     </Style.Triggers>
+
+                    <Setter Property="Background" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+
                 </Style>
             </DataGrid.RowStyle>
 
+            <DataGrid.CellStyle>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="Background" Value="{x:Null}" />
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{x:Null}" />
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+
+
+            </DataGrid.CellStyle>
         </DataGrid>
 
         <Button Grid.Row="3" Grid.Column="1"
@@ -131,7 +163,9 @@
                 Background="#5FB9B0"
                 Foreground="#413D65"
                 Margin="0 0 0 0"
-                Command="{Binding ToggleDownloadCommand}">
+                Click="ButtonBase_OnClick"
+                Command="{Binding ToggleDownloadCommand}"
+                IsHitTestVisible="{Binding IsNotDownloading}">
 
             <TextBlock FontSize="18"
                        Text="V"

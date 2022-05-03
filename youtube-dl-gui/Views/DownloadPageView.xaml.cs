@@ -43,6 +43,11 @@ namespace youtube_dl_gui.Views
             d.SetData(DataFormats.Text, text);
             e.DataObject = d;
         }
-        
+
+        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dg = VideoSourceDatGrid;
+            dg.UnselectAll();
+        }
     }
 }
