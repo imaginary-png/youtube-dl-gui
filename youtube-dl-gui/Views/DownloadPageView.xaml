@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
 
-    <Grid Background="Chocolate">
+    <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
             <RowDefinition Height="0.5*"/>
@@ -23,6 +23,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBox Grid.Row="0" Grid.ColumnSpan="99" TextWrapping="Wrap" x:Name="InputTextBox" 
+                 Background="LightGray"
                  Text="{Binding InputText}">
 
         </TextBox>
@@ -49,7 +50,7 @@
 
         <DataGrid Grid.Row="2" Grid.ColumnSpan="99"
                   BorderThickness="0" x:Name="VideoSourceDatGrid" 
-                  Background="WhiteSmoke"
+                  Background="LightGray"
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
                   ColumnHeaderHeight="25"
@@ -123,7 +124,13 @@
                             <Setter Property="Background" Value="LightGreen"></Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Status}" Value="Success">
-                            <Setter Property="Background" Value="MediumSeaGreen"></Setter>
+                            <Setter Property="Background" Value="MediumSpringGreen"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Failed">
+                            <Setter Property="Background" Value="PaleVioletRed"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                            <Setter Property="Background" Value="DarkGray"></Setter>
                         </DataTrigger>
 
                         <Trigger Property="IsSelected" Value="True">

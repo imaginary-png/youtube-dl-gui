@@ -36,8 +36,7 @@ namespace youtube_dl_gui.ViewModels
                 OnPropertyChanged(nameof(InputText));
             }
         }
-
-        public ObservableCollection<VideoSource> Sources { get; set; }
+        
         public ObservableCollection<Job> Jobs { get; set; }
         public List<string> URLS { get; set; }
 
@@ -81,7 +80,6 @@ namespace youtube_dl_gui.ViewModels
 
         public DownloadPageViewModel()
         {
-            Sources = new ObservableCollection<VideoSource>();
             Jobs = new ObservableCollection<Job>();
             URLS = new List<string>();
 
@@ -91,85 +89,7 @@ namespace youtube_dl_gui.ViewModels
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
 
-            #region fdsfds
-            
-            Sources.Add(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                {
-                    Downloaded = "222220", DownloadPercentage = "25%", DownloadSpeed = "2220", ETA = "30224s",
-                    FileSize = "2274MiB"
-                },
-                Formats = new List<VideoFormat>
-                {
-                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            });
-            Sources.Add(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                {
-                    Downloaded = "222220", DownloadPercentage = "100%", DownloadSpeed = "2220", ETA = "30224s",
-                    FileSize = "2274MiB"
-                },
-                Formats = new List<VideoFormat>
-                {
-                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            });
-            Sources.Add(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                {
-                    Downloaded = "222220", DownloadPercentage = "", DownloadSpeed = "2220", ETA = "30224s",
-                    FileSize = "2274MiB"
-                },
-                Formats = new List<VideoFormat>
-                {
-                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            });
-            Sources.Add(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                {
-                    Downloaded = "222220", DownloadPercentage = "0%", DownloadSpeed = "2220", ETA = "30224s",
-                    FileSize = "2274MiB"
-                },
-                Formats = new List<VideoFormat>
-                {
-                    new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                    new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                    new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            });
-            #endregion
+          
 
             #region Job Test Add
 
@@ -252,7 +172,7 @@ namespace youtube_dl_gui.ViewModels
 
             foreach (var s in splitInput)
             {
-                if (Sources.FirstOrDefault(v => v.URL == s) != null) continue;
+                if (Jobs.FirstOrDefault(j => j.Source.URL == s) != null) continue;
                 if (usedUrls.Contains(s)) continue;
 
                 usedUrls.Add(s);
@@ -278,26 +198,7 @@ namespace youtube_dl_gui.ViewModels
         private void TestCommand_Execute()
         {
             Trace.WriteLine($"\n\n{InputText}\n\n");
-            /*
-            Sources.Add(new VideoSource("URL")
-            {
-                DownloadLog =
-                {
-                    Downloaded = "450", DownloadPercentage = "88", DownloadSpeed = "1200", ETA = "524s",
-                    FileSize = "500"
-                },
-                Formats = new List<VideoFormat>
-                {
-                    new VideoFormat("1", "m2p4", "1080x1920", "1080p", "1080", "1920", "30ps"),
-                    new VideoFormat("2", "m2p4", "720x1280", "720p", "720", "1280", "30fps"),
-                    new VideoFormat("3", "m2p4", "360x480", "360p", "360", "480", "22fps")
-                },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            });
-
-            Sources[0].URL += "5";*/
+          
         }
 
 
@@ -320,7 +221,6 @@ namespace youtube_dl_gui.ViewModels
                     videoSource.GetVideoFormats());
 
                 SimplifyFormatsToUniqueResolutionsOnly(videoSource);
-                Sources.Add(videoSource);
                 Jobs.Add(new Job(videoSource));
             }
             catch (ArgumentException e)
@@ -347,7 +247,12 @@ namespace youtube_dl_gui.ViewModels
         /// <param name="source"></param>
         private void SimplifyFormatsToUniqueResolutionsOnly(VideoSource source)
         {
-            //ToDo
+            if (source.URL.Contains("twitch.tv"))
+            {
+                SimplifyTwitchURL(source);
+                return;
+            }
+
             var resolutions = new List<string>();
 
             //get a list of available resolutions based on height, e.g., 1920x1080 = 1080p, 2560x1440 = 1440p
@@ -376,6 +281,17 @@ namespace youtube_dl_gui.ViewModels
             source.SelectedFormat = source.Formats[0].Height;
         }
 
+        //just set any twitch links to "best" quality only, for simplicity.
+        private void SimplifyTwitchURL(VideoSource source)
+        {
+            var format = new VideoFormat
+            {
+                ResolutionLabel = "best",
+                Height = "best" //height is needed for the view's combobox default selection
+            };
+            source.Formats = new List<VideoFormat> {format};
+            source.SelectedFormat = source.Formats[0].ResolutionLabel;
+        }
         #endregion
 
         #region Download helpers
