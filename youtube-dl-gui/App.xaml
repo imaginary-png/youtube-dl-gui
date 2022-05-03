@@ -18,9 +18,9 @@
             <views:SettingsView/>
         </DataTemplate>
 
-        
-            <SolidColorBrush x:Key="DynamicColor" Color="DarkCyan"/>
-        
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <SolidColorBrush x:Key="DynamicColor" Color="DarkCyan"/>
+
     </Application.Resources>
 
 </Application>

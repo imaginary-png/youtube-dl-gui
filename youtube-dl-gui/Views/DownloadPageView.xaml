@@ -49,7 +49,7 @@
         </Button>
 
         <DataGrid Grid.Row="2" Grid.ColumnSpan="99"
-                  BorderThickness="0" x:Name="VideoSourceDatGrid" 
+                  BorderThickness="0" x:Name="VideoSourceDataGrid" 
                   Background="LightGray"
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
@@ -89,11 +89,6 @@
                                     Width="*"
                                     Binding="{Binding Status}"></DataGridTextColumn>
 
-                <DataGridTextColumn Header="Selected"
-                                    Width="*"
-                                    Binding="{Binding Source.SelectedFormat}"></DataGridTextColumn>
-
-
                 <DataGridTemplateColumn Header="Formats">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -109,6 +104,30 @@
                             </ComboBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Cancel Job Button -->
+                <DataGridTemplateColumn Header=""
+                                        Width="0.2*">
+                    <!-- Use converter ? convert job status to visible/hidden -->
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Visibility="{Binding IsNotDownloading, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding ElementName=VideoSourceDataGrid,
+                                    Path=DataContext.RemoveJobClicked}"
+                                    CommandParameter="{Binding}"
+                                    Content="X" 
+                                    FontWeight="DemiBold"
+                                    Width="10"
+                                    Height="10"
+                                    FontSize="8"
+                                    Background="Transparent"
+                                    BorderThickness="1"
+                                    Padding="0 -2 0 0"
+                                    Margin=" 0 2 0 2"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
                 </DataGridTemplateColumn>
 
             </DataGrid.Columns>
@@ -159,9 +178,8 @@
                     </Style.Triggers>
                 </Style>
 
-
-
             </DataGrid.CellStyle>
+
         </DataGrid>
 
         <Button Grid.Row="3" Grid.Column="1"

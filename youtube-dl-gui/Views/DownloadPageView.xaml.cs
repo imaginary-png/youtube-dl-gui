@@ -46,7 +46,7 @@ namespace youtube_dl_gui.Views
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            var dg = VideoSourceDatGrid;
+            var dg = VideoSourceDataGrid;
             dg.UnselectAll();
         }
     }

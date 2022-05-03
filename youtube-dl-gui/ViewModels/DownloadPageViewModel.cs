@@ -190,6 +190,7 @@ namespace youtube_dl_gui.ViewModels
 
         private void ToggleDownload_Execute()
         {
+            DisableAllRemoveButtons();
             BulkDownload = true;
             if (BulkDownload) DownloadInBulk();
             else DownloadOneByOne();
@@ -296,12 +297,16 @@ namespace youtube_dl_gui.ViewModels
 
         #region Download helpers
 
+        public void DisableAllRemoveButtons()
+        {
+            foreach (var job in Jobs)
+            {
+                job.IsNotDownloading = false;
+            }
+        }
+
         public async Task DownloadOneByOne()
         {
-            /*foreach (var vs in Sources)
-            {
-                await vs.Download();
-            }*/
             IsNotDownloading = false;
             foreach (var j in Jobs)
             {
@@ -316,19 +321,6 @@ namespace youtube_dl_gui.ViewModels
 
         public async Task DownloadInBulk()
         {
-            /*var queueList = new List<Task>();
-
-            foreach (var vs in Sources)
-            {
-                queueList.Add(vs.Download());
-            }
-
-            while (queueList.Any())
-            {
-                var finTask = await Task.WhenAny(queueList);
-                queueList.Remove(finTask);
-            }*/
-
             Trace.WriteLine("\n===================================================\n" +
                             "Bulk Downloading...\n" +
                             "====================================================\n");

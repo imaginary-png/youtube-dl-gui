@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.Tracing;
+using System.Security.Cryptography.Pkcs;
 using youtube_dl_gui_wrapper;
 using youtube_dl_gui_wrapper.Annotations;
 using youtube_dl_gui_wrapper.Models;
@@ -18,6 +19,7 @@ namespace youtube_dl_gui.Models
     public class Job : ObservableObject
     {
         private string _status;
+        private bool _isNotDownloading;
 
         public string Status
         {
@@ -27,6 +29,20 @@ namespace youtube_dl_gui.Models
                 if (value == _status) return;
                 _status = value;
                 OnPropertyChanged(nameof(Status));
+
+                if (value == JobStatus.Downloading.ToString()) IsNotDownloading = false;
+                else IsNotDownloading = true;
+            }
+        }
+
+        public bool IsNotDownloading
+        {
+            get => _isNotDownloading;
+            set
+            {
+                if (value == _isNotDownloading) return;
+                _isNotDownloading = value;
+                OnPropertyChanged(nameof(IsNotDownloading));
             }
         }
 
@@ -37,6 +53,7 @@ namespace youtube_dl_gui.Models
         {
             Source = source;
             Status = JobStatus.Waiting.ToString();
+            IsNotDownloading = true;
 
             Source.DownloadLog.PropertyChanged += UpdateJobStatus;
         }
@@ -53,7 +70,6 @@ namespace youtube_dl_gui.Models
                 if (Source.DownloadLog.DownloadPercentage == "100%") SetStatus(JobStatus.Success);
                 else SetStatus(JobStatus.Downloading);
             }
-
         }
     }
 }
