@@ -18,8 +18,13 @@
             <views:SettingsView/>
         </DataTemplate>
 
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <SolidColorBrush x:Key="DynamicColor" Color="DarkCyan"/>
+
+        <SolidColorBrush x:Key="MainBackgroundColour" Color="#413D65"/>
+        <SolidColorBrush x:Key="TitleBarColour" Color="#412A65"/>
+
+        <SolidColorBrush x:Key="DownloadPageBackground" Color="LightGray"/>
+
+        
 
     </Application.Resources>
 

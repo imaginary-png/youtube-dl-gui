@@ -31,7 +31,7 @@
         <CornerRadius x:Key="WindowCornerRadiusWindow" TopLeft="8" TopRight="8" BottomRight="8" BottomLeft="8"/>
     </Window.Resources>
 
-    <Border Background="#413D65"
+    <Border Background="{DynamicResource MainBackgroundColour}"
             BorderThickness="0"
             BorderBrush="Gainsboro"
             CornerRadius="{StaticResource WindowCornerRadiusWindow}">
@@ -51,7 +51,7 @@
 
             <!-- Custom Title Bar Section, span all columns -->
             <Border Grid.Row="0" Grid.ColumnSpan="99" 
-                    Background="#412A65"
+                    Background="{DynamicResource TitleBarColour}"
                     MouseDown="UIElement_OnMouseDown"
                     CornerRadius="{StaticResource WindowCornerRadiusMenuBar}">
             <Grid 
