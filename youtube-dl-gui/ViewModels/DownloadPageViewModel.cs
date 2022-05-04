@@ -23,8 +23,6 @@ namespace youtube_dl_gui.ViewModels
         private string _inputText;
         private bool _useYoutubeDl = false;
         private bool _bulkDownload = false;
-        private bool _isNotDownloading;
-
 
         public string InputText
         {
@@ -62,17 +60,6 @@ namespace youtube_dl_gui.ViewModels
             }
         }
 
-        public bool IsNotDownloading
-        {
-            get => _isNotDownloading;
-            set
-            {
-                if (value == _isNotDownloading) return;
-                _isNotDownloading = value;
-                OnPropertyChanged(nameof(IsNotDownloading));
-            }
-        }
-
         public ICommand TestCommand { get; set; }
         public ICommand AddURLsCommand { get; set; }
         public ICommand ToggleDownloadCommand { get; set; }
@@ -82,9 +69,7 @@ namespace youtube_dl_gui.ViewModels
         {
             Jobs = new ObservableCollection<Job>();
             URLS = new List<string>();
-
-            IsNotDownloading = true;
-
+            
             TestCommand = new RelayCommand(p => TestCommand_Execute(), null);
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
@@ -307,16 +292,13 @@ namespace youtube_dl_gui.ViewModels
 
         public async Task DownloadOneByOne()
         {
-            IsNotDownloading = false;
             foreach (var j in Jobs)
             {
-                if (j.Status == JobStatus.Success.ToString()) continue; //skip finished downloads
+                if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
                 await j.Source.Download();
                 Trace.WriteLine($"\n{j.Source.FileName} Finished\n");
                 //else something went wrong, fail? cancelled?
             }
-
-            IsNotDownloading = true;
         }
 
         public async Task DownloadInBulk()
@@ -324,12 +306,11 @@ namespace youtube_dl_gui.ViewModels
             Trace.WriteLine("\n===================================================\n" +
                             "Bulk Downloading...\n" +
                             "====================================================\n");
-            IsNotDownloading = false;
             var queueList = new List<Task>();
 
             foreach (var j in Jobs)
             {
-                if (j.Status == JobStatus.Success.ToString()) continue; //skip finished downloads
+                if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
                 queueList.Add(j.Source.Download());
             }
 
@@ -338,8 +319,7 @@ namespace youtube_dl_gui.ViewModels
                 var finTask = await Task.WhenAny(queueList);
                 queueList.Remove(finTask);
             }
-
-            IsNotDownloading = true;
+            
 
             Trace.WriteLine("\n===================================================\n" +
                             "Bulk Downloading... DONE!\n" +

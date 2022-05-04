@@ -189,8 +189,7 @@
                 Foreground="#413D65"
                 Margin="0 0 0 0"
                 Click="ButtonBase_OnClick"
-                Command="{Binding ToggleDownloadCommand}"
-                IsHitTestVisible="{Binding IsNotDownloading}">
+                Command="{Binding ToggleDownloadCommand}">
 
             <TextBlock FontSize="18"
                        Text="V"
