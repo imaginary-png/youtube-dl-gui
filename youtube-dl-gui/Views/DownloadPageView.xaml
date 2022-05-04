@@ -112,7 +112,6 @@
                     <!-- Use converter ? convert job status to visible/hidden -->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <!-- Visibility="{Binding IsNotDownloading, Converter={StaticResource BoolToVis}}" -->
                             <Button Command="{Binding ElementName=VideoSourceDataGrid,
                                     Path=DataContext.CancelRemoveJobCommand}"
                                     CommandParameter="{Binding}"

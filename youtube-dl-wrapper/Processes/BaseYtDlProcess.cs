@@ -54,12 +54,12 @@ namespace youtube_dl_gui_wrapper
             if (source.SelectedFormat == "audio")
             {
                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
-                             $" -f \"ba\" --newline"; //bestaudio
+                             $" -f \"bestaudio\" --newline"; //bestaudio
             }
             else if (useHeight && !source.URL.Contains("twitch.tv")) //twitch does not have multiple streams, can't use bestvideo+bestaudio
             {
                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
-                             $" -f \"bestvideo[height={source.SelectedFormat}]+ba\" --newline";
+                             $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
             }
             else
             {

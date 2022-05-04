@@ -11,7 +11,7 @@ namespace youtube_dl_gui_wrapper
         /// Starts the youtube-dl download.
         /// </summary>
         /// <param name="source"><see cref="VideoSource"/> containing URL and selected format. If none, defaults to 'best'</param>
-        /// <param name="useHeight">Determin whether to use format code or get best based on height resolution</param>
+        /// <param name="useHeight">Determine whether to use format code or get best based on height resolution</param>
         /// <returns></returns>
         Task<bool> StartDownload(VideoSource source, bool useHeight = false);
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +15,7 @@ namespace youtube_dl_gui_wrapper
 {
     public class VideoSource : ObservableObject
     {
-        private readonly CancellationTokenSource _cancelToken;
+        private CancellationTokenSource _cancelToken;
         private bool _isDownloading = false;
         private IYoutubeDownloadProcess _process;
         private List<VideoFormat> _formats;
@@ -101,6 +102,7 @@ namespace youtube_dl_gui_wrapper
         /// </summary>
         public async Task Download()
         {
+            Console.WriteLine("Is downloading: " + _isDownloading);
             if (_isDownloading) return;
             _isDownloading = true;
             await _process.StartDownload(this, UseHeightForDownload);
@@ -113,13 +115,19 @@ namespace youtube_dl_gui_wrapper
         /// </summary>
         public void Cancel()
         {
-            _isDownloading = false;
+            Trace.WriteLine($"\n{_cancelToken.IsCancellationRequested}");
             _cancelToken.Cancel();
-            Console.WriteLine($"\n\n" +
-                              $"================================================================\n" +
+
+            Console.WriteLine($"================================================================\n" +
                               $"Cancelling Download of {URL}\n" +
                               $"================================================================\n" +
-                              $"\n\n");
+                              $"\n");
+            Trace.WriteLine($"================================================================\n" +
+                              $"Cancelling Download of {URL}\n" +
+                              $"================================================================\n" +
+                              $"\n");
+            ResetCancellationToken();
+            _isDownloading = false;
         }
 
         public void ChangeYoutubeDlProcess(IYoutubeDownloadProcess process)
@@ -169,8 +177,17 @@ namespace youtube_dl_gui_wrapper
                 }
             }
         }
-
         #endregion
 
+        #region Helpers
+
+        private void ResetCancellationToken()
+        {
+            _cancelToken.Dispose();
+            _cancelToken = new CancellationTokenSource();
+            Token = _cancelToken.Token;
+        }
+
+        #endregion
     }
 }

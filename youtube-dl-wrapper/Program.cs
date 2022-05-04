@@ -14,32 +14,17 @@ namespace youtube_dl_gui_wrapper
         static async Task Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            var url = @"https://www.youtube.com/watch?v=Xpt9TyFzwJA";
+           var url = @"https://www.youtube.com/watch?v=eey91kzfOZs";
+           var vs = new VideoSource(url);
 
-            var vsl = new List<VideoSource>();
+           vs.DownloadLog.PropertyChanged += Updated;
+           Start(vs);
 
-            var vs1 = new VideoSource("https://www.youtube.com/watch?v=2VauFS071pg");
-            var vs2 = new VideoSource("https://www.youtube.com/watch?v=FewJRam0g4I");
-            var vs3 = new VideoSource("");
-            var vs4 = new VideoSource("https://docs.microsoft.com/en-us/xamarin/xamarin-forms/enterprise-application-patterns/mvvm");
-
-            vsl.Add(vs1);
-            vsl.Add(vs2);
-            vsl.Add(vs3);
-            vsl.Add(vs4);
-
-            try
-            {
-                await Start1(vsl);
-            }
-            catch (ArgumentException e)
-            {
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\n\n============================================================\n{e.Message}\n=========================================================================\n\n");
-                Console.ResetColor();
-            }
-
-            Thread.Sleep(10000);
+           Thread.Sleep(3000);
+           vs.Cancel();
+           Thread.Sleep(1000);
+            Start(vs);
+            Console.ReadLine();
         }
 
         public static async Task Start1(List<VideoSource> vsl)
@@ -50,7 +35,13 @@ namespace youtube_dl_gui_wrapper
         {
             try
             {
-                await source.GetVideoFormats();
+                source.SelectedFormat = "144";
+                source.UseHeightForDownload = true;
+                source.Formats.Add(new VideoFormat());
+                source.Formats[0].Height = "144";
+
+                await source.Download();
+
             }
             catch (ArgumentException e)
             {

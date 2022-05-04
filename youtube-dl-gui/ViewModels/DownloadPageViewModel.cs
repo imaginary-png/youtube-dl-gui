@@ -75,76 +75,6 @@ namespace youtube_dl_gui.ViewModels
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
             CancelRemoveJobCommand = new RelayCommand(p => CancelRemoveJob_Execute((Job)p), null);
-
-          
-
-            #region Job Test Add
-
-
-           /* Jobs.Add(new Job(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                  {
-                      Downloaded = "222220", DownloadPercentage = "25%", DownloadSpeed = "2220", ETA = "30224s",
-                      FileSize = "2274MiB"
-                  },
-                Formats = new List<VideoFormat>
-                  {
-                      new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                      new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                      new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                  },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            }));
-            Jobs.Add(new Job(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                  {
-                      Downloaded = "222220", DownloadPercentage = "", DownloadSpeed = "2220", ETA = "30224s",
-                      FileSize = "2274MiB"
-                  },
-                Formats = new List<VideoFormat>
-                  {
-                      new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                      new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                      new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                  },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            }));
-            Jobs.Add(new Job(new VideoSource("URL")
-            {
-                FileName = "hello",
-                Duration = "1234",
-                DownloadLog =
-                  {
-                      Downloaded = "222220", DownloadPercentage = "100%", DownloadSpeed = "2220", ETA = "30224s",
-                      FileSize = "2274MiB"
-                  },
-                Formats = new List<VideoFormat>
-                  {
-                      new VideoFormat("1", "m2p4", "72250x2103", "1080p", "1080", "1920", "30222fps"),
-                      new VideoFormat("2", "m2p4", "72250x2103", "720p", "720", "1280", "30222fps"),
-                      new VideoFormat("3", "m2p4", "72250x2103", "360p", "360", "480", "30222fps")
-                  },
-                SelectedFormat = "360",
-                URL = "LOL1"
-
-            }));
-
-            Jobs[1].SetStatus(JobStatus.Downloading);
-            Jobs[2].SetStatus(JobStatus.Success);
-*/
-
-            #endregion
-
         }
 
         private async Task AddURLs_Execute()
@@ -177,7 +107,6 @@ namespace youtube_dl_gui.ViewModels
 
         private void ToggleDownload_Execute()
         {
-            DisableAllRemoveButtons();
             BulkDownload = true;
             if (BulkDownload) DownloadInBulk();
             else DownloadOneByOne();
@@ -194,8 +123,7 @@ namespace youtube_dl_gui.ViewModels
             if (job.Status == JobStatus.Downloading.ToString())
             {
                 job.Source.Cancel();
-                //it should cancel, is this check needed?
-                if (job.Source.Token.IsCancellationRequested) job.SetStatus(JobStatus.Cancelled);
+                job.SetStatus(JobStatus.Cancelled);
             }
             else
             {
@@ -296,15 +224,7 @@ namespace youtube_dl_gui.ViewModels
         #endregion
 
         #region Download helpers
-
-        public void DisableAllRemoveButtons()
-        {
-            foreach (var job in Jobs)
-            {
-                job.IsNotDownloading = false;
-            }
-        }
-
+        
         public async Task DownloadOneByOne()
         {
             foreach (var j in Jobs)
@@ -318,7 +238,7 @@ namespace youtube_dl_gui.ViewModels
 
         public async Task DownloadInBulk()
         {
-            Trace.WriteLine("\n===================================================\n" +
+            Trace.WriteLine("===================================================\n" +
                             "Bulk Downloading...\n" +
                             "====================================================\n");
             var queueList = new List<Task>();
@@ -326,6 +246,7 @@ namespace youtube_dl_gui.ViewModels
             foreach (var j in Jobs)
             {
                 if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
+                Trace.WriteLine("Adding Job" + j.Source.FileName);
                 queueList.Add(j.Source.Download());
             }
 
@@ -336,7 +257,7 @@ namespace youtube_dl_gui.ViewModels
             }
             
 
-            Trace.WriteLine("\n===================================================\n" +
+            Trace.WriteLine("===================================================\n" +
                             "Bulk Downloading... DONE!\n" +
                             "====================================================\n");
         }
