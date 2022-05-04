@@ -49,5 +49,11 @@ namespace youtube_dl_gui.Views
             var dg = VideoSourceDataGrid;
             dg.UnselectAll();
         }
+
+        private void VideoSourceDataGrid_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            var dg = VideoSourceDataGrid;
+            dg.UnselectAll();
+        }
     }
 }

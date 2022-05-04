@@ -21,8 +21,8 @@ namespace youtube_dl_gui.ViewModels
     public class DownloadPageViewModel : BaseUserControlViewModel, INotifyPropertyChanged
     {
         private string _inputText;
-        private bool _useYoutubeDl = false;
-        private bool _bulkDownload = false;
+        private bool _useYoutubeDl;
+        private bool _bulkDownload;
 
         public string InputText
         {
@@ -60,7 +60,6 @@ namespace youtube_dl_gui.ViewModels
             }
         }
 
-        public ICommand TestCommand { get; set; }
         public ICommand AddURLsCommand { get; set; }
         public ICommand ToggleDownloadCommand { get; set; }
         public ICommand CancelRemoveJobCommand { get; set; }
@@ -70,8 +69,10 @@ namespace youtube_dl_gui.ViewModels
         {
             Jobs = new ObservableCollection<Job>();
             URLS = new List<string>();
+
+            UseYoutubeDl = true; // use yt-dl as default, youtube-dl 2021.12.17 has issue with slow youtube downloads currently.
+            BulkDownload = true;
             
-            TestCommand = new RelayCommand(p => TestCommand_Execute(), null);
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
             CancelRemoveJobCommand = new RelayCommand(p => CancelRemoveJob_Execute((Job)p), null);
@@ -107,15 +108,8 @@ namespace youtube_dl_gui.ViewModels
 
         private void ToggleDownload_Execute()
         {
-            BulkDownload = true;
             if (BulkDownload) DownloadInBulk();
             else DownloadOneByOne();
-        }
-
-        private void TestCommand_Execute()
-        {
-            Trace.WriteLine($"\n\n{InputText}\n\n");
-          
         }
 
         private void CancelRemoveJob_Execute(Job job)
@@ -225,7 +219,7 @@ namespace youtube_dl_gui.ViewModels
 
         #region Download helpers
         
-        public async Task DownloadOneByOne()
+        private async Task DownloadOneByOne()
         {
             foreach (var j in Jobs)
             {
@@ -236,7 +230,7 @@ namespace youtube_dl_gui.ViewModels
             }
         }
 
-        public async Task DownloadInBulk()
+        private async Task DownloadInBulk()
         {
             Trace.WriteLine("===================================================\n" +
                             "Bulk Downloading...\n" +

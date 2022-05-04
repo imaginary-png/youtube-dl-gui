@@ -12,7 +12,7 @@ namespace youtube_dl_gui_wrapper
     {
         protected string Exe;
         protected string OutputFolder = @"%USERPROFILE%\Desktop\";
-        protected string NamingScheme = "%(title)s-%(id)s.%(ext)s";
+        protected string NamingScheme = "%(title)s-%(id)s-%(resolution)s.%(ext)s";
 
         /// <summary>
         /// Creates with an exe path.

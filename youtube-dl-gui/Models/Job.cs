@@ -55,8 +55,8 @@ namespace youtube_dl_gui.Models
         {
             //update download log
             if (e.PropertyName == nameof(Source.DownloadLog.DownloadPercentage))
-            {
-                if (Source.DownloadLog.DownloadPercentage == "100%") SetStatus(JobStatus.Success);
+            {   //yt-dlp - no decimal, youtube-dl decimal... for 100%
+                if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%" ) SetStatus(JobStatus.Success);
                 else SetStatus(JobStatus.Downloading);
             }
             //is selected format changes, set status ready for download

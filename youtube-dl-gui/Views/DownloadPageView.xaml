@@ -56,7 +56,8 @@
                   ColumnHeaderHeight="25"
                   FontSize="12"
                   IsReadOnly="True"
-                  ItemsSource="{Binding Jobs}">
+                  ItemsSource="{Binding Jobs}"
+                  MouseMove="VideoSourceDataGrid_OnMouseMove">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"

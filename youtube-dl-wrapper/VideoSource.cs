@@ -102,7 +102,6 @@ namespace youtube_dl_gui_wrapper
         /// </summary>
         public async Task Download()
         {
-            Console.WriteLine("Is downloading: " + _isDownloading);
             if (_isDownloading) return;
             _isDownloading = true;
             await _process.StartDownload(this, UseHeightForDownload);
