@@ -63,6 +63,7 @@ namespace youtube_dl_gui.ViewModels
         public ICommand TestCommand { get; set; }
         public ICommand AddURLsCommand { get; set; }
         public ICommand ToggleDownloadCommand { get; set; }
+        public ICommand CancelRemoveJobCommand { get; set; }
 
 
         public DownloadPageViewModel()
@@ -73,6 +74,7 @@ namespace youtube_dl_gui.ViewModels
             TestCommand = new RelayCommand(p => TestCommand_Execute(), null);
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
+            CancelRemoveJobCommand = new RelayCommand(p => CancelRemoveJob_Execute((Job)p), null);
 
           
 
@@ -187,11 +189,24 @@ namespace youtube_dl_gui.ViewModels
           
         }
 
+        private void CancelRemoveJob_Execute(Job job)
+        {
+            if (job.Status == JobStatus.Downloading.ToString())
+            {
+                job.Source.Cancel();
+                //it should cancel, is this check needed?
+                if (job.Source.Token.IsCancellationRequested) job.SetStatus(JobStatus.Cancelled);
+            }
+            else
+            {
+                Jobs.Remove(job);
+            }
+        }
 
         #region Helpers
 
         #region Video from URL helpers
-        
+
         /// <summary>
         /// Helper for getting video information.
         /// </summary>

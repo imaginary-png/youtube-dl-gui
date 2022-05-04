@@ -8,12 +8,9 @@
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
         Title="MainWindow" Height="1000" Width="1600"
-        Foreground="Azure"
-        
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True"
-        ResizeMode="CanResize"
         >
 
     <WindowChrome.WindowChrome>
@@ -38,9 +35,6 @@
             BorderThickness="0"
             BorderBrush="Gainsboro"
             CornerRadius="{StaticResource WindowCornerRadiusWindow}">
-        <Border.Effect>
-            <DropShadowEffect/>
-        </Border.Effect>
  
 
         <Grid ShowGridLines="True">

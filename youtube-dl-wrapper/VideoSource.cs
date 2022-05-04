@@ -104,6 +104,7 @@ namespace youtube_dl_gui_wrapper
             if (_isDownloading) return;
             _isDownloading = true;
             await _process.StartDownload(this, UseHeightForDownload);
+            _isDownloading = false;
         }
 
 
