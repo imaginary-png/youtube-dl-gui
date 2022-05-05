@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using Newtonsoft.Json;
 using youtube_dl_gui_wrapper.Models;
 
@@ -8,7 +9,8 @@ namespace youtube_dl_gui.Models
     {
         private const string ConfigFileLocation = "./config.json";
 
-        public Settings UserSettings;
+        public Settings UserSettings { get; private set; }
+
 
         public SettingsManager()
         {
@@ -29,7 +31,6 @@ namespace youtube_dl_gui.Models
                     JsonConvert.DeserializeObject<Settings>(File.ReadAllText(ConfigFileLocation), jsonSettings);
                 return;
             }
-
             CreateDefaultSettings();
         }
 
@@ -39,15 +40,11 @@ namespace youtube_dl_gui.Models
             OnPropertyChanged(nameof(UserSettings)); //not needed?
         }
 
-
         private void CreateDefaultSettings()
         {
             File.Create(ConfigFileLocation).Close();
             UserSettings = new Settings();
             SaveSettings();
         }
-
-
     }
 }
-

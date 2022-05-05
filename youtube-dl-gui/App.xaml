@@ -19,12 +19,88 @@
         </DataTemplate>
 
 
-        <SolidColorBrush x:Key="MainBackgroundColour" Color="#413D65"/>
-        <SolidColorBrush x:Key="TitleBarColour" Color="#412A65"/>
+        <SolidColorBrush x:Key="MainBackgroundColour" Color="#36393f"/>
+        <SolidColorBrush x:Key="SecondaryBackgroundColour" Color="#2f3136"/>
+        <SolidColorBrush x:Key="TitleBarColour" Color="#202225"/>
+        <SolidColorBrush x:Key="SideBar" Color="#2f3136"/>
+
+        <SolidColorBrush x:Key="SettingsFontColor" Color="#ffffff"/>
+        <SolidColorBrush x:Key="SettingsSubTextFontColor" Color="#b9bbbe"/>
 
         <SolidColorBrush x:Key="DownloadPageBackground" Color="LightGray"/>
 
-        
+        <!-- checkbox styling -->
+        <Style x:Key="CheckBoxToggleStyle" TargetType="CheckBox">
+            <Setter Property="IsChecked" Value="False"/>
+            <Setter Property="Background" Value="#72767d"/>
+            <!-- BACKGROUND COLOUR WHEN TOGGLED OFF -->
+            <Setter Property="Foreground" Value="#999"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border Width="50" Height="24" CornerRadius="12" Background="{TemplateBinding Background}" >
+                            <Grid>
+                                <!-- White circle -->
+                                <Border x:Name="border" Width="18" Height="18" 
+                                        CornerRadius="9" VerticalAlignment="Center" 
+                                        HorizontalAlignment="Left" Margin="3 0" Background="White">
+                                    <Border.RenderTransform>
+                                        <TranslateTransform  X="0"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                                <!-- On/Off text-->
+                                <TextBlock x:Name="txt" Text="{TemplateBinding Content}"
+                                           Margin="7 0" VerticalAlignment="Center" Foreground="White" >
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform   X="16"></TranslateTransform>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <!-- BACKGROUND COLOUR WHEN TOGGLED ON older:#18852f old: #30af4b -->
+                                <Setter Property="Background" Value="#4ca55a"/>
+                                <!-- Change text to 'tag' text when checked -->
+                                <Setter Property="Text" TargetName="txt"  Value="{Binding Tag,RelativeSource={RelativeSource TemplatedParent}}"/>
+                                <!-- Change this to change text colour when ON-->
+                                <Setter Property="Foreground" TargetName="txt"  Value="White"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Checked animation -->
+                                            <DoubleAnimation Storyboard.TargetName="border" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
+                                                             To="26" Duration="00:00:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="txt" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
+                                                             To="0" Duration="00:00:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Uncheck animation -->
+                                            <DoubleAnimation Storyboard.TargetName="border" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
+                                                             To="0" Duration="00:00:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="txt" 
+                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)" 
+                                                             To="16" Duration="00:00:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <!-- Change text to 'content' text when unchecked -->
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Text" TargetName="txt" Value="{Binding Content,RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Application.Resources>
 

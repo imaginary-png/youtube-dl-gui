@@ -6,15 +6,161 @@
              xmlns:local="clr-namespace:youtube_dl_gui.Views"
              xmlns:viewModels="clr-namespace:youtube_dl_gui.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <viewModels:SettingsViewModel/>
-    </UserControl.DataContext>
+             d:DataContext="{d:DesignInstance Type=viewModels:SettingsViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="800" d:DesignWidth="1400"
+             FontSize="14">
 
-    <Grid Background="Aquamarine">
-            <Label HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="50"
-                Content="{Binding Text}"/>
+    <Grid Background="{DynamicResource MainBackgroundColour}"
+          ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.2*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height=".2*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height=".2*"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width=".5*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Side Titles -->
+            <StackPanel Grid.Row="0"
+                        Grid.Column="0">
+                <TextBlock Text="Use Youtube DL"
+                           FontSize="16"
+                           FontWeight="DemiBold"
+                           Foreground="{DynamicResource SettingsFontColor}"/>
+
+                <TextBlock FontSize="12"
+                           Margin="0 8 0 0"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SettingsSubTextFontColor}"
+                           >Use youtube-dl, or alternatively use yt-dlp.<LineBreak/>
+                    As of youtube-dl 2021.12.17 - youtube downloads are slow, 
+                    so recommend disabling this and using ytp-dl.
+                </TextBlock>
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="2"
+                        Grid.Column="0">
+                <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Text="Bulk Download"
+                       FontSize="16"
+                       FontWeight="DemiBold"
+                       Foreground="{DynamicResource SettingsFontColor}"/>
+
+                <TextBlock FontSize="12"
+                           Margin="0 8 0 0"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource SettingsSubTextFontColor}">
+                    Enable to download all videos concurrently, disable to download one-by-one.
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Grid.Row="4"
+                        Grid.Column="0">
+                <TextBlock 
+                   Text="Download Folder"
+                   FontSize="16"
+                   FontWeight="DemiBold"
+                   Foreground="{DynamicResource SettingsFontColor}"/>
+
+            <TextBlock FontSize="12"
+                       Margin="0 8 0 0"
+                       TextWrapping="Wrap"
+                       Text="{Binding SettingsManager.UserSettings.OutputFolder}"
+                       Foreground="{DynamicResource SettingsSubTextFontColor}"/>
+            </StackPanel>
+
+            <!-- Selectors -->
+
+            <CheckBox Grid.Row="0" 
+                      Grid.Column="1"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Right"
+                      Style="{DynamicResource CheckBoxToggleStyle}"
+                      Content="Off" Tag="On"
+                      IsChecked="{Binding SettingsManager.UserSettings.UseYoutubeDL}"
+                      />
+
+            <CheckBox Grid.Row="2" 
+                      Grid.Column="1"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Right"
+                      Style="{DynamicResource CheckBoxToggleStyle}"
+                      Content="Off" Tag="On"
+                      IsChecked="{Binding SettingsManager.UserSettings.BulkDownload}"
+                      />
+
+            <Button Grid.Row="4"
+                    Grid.Column="1"
+                    Width="50"
+                    Height="24"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Content="put 'choose folder' image here"></Button>
+
+            <!-- Save Button -->
+            <Button Grid.Row="6" 
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Margin="0 80 0 0"
+                    Content="Apply"
+                    Width="45"
+                    Height="25"
+                    Command="{Binding SaveCommand}">
+
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="4 4 4 4"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <!-- separators -->
+            <GridSplitter ResizeDirection="Columns" 
+                          Grid.Row="1" 
+                          Grid.Column="0"
+                          Grid.ColumnSpan="2" 
+                          Background="DarkGray"
+                          Height="1" Width="Auto" 
+                          HorizontalAlignment="Stretch"/>
+
+            <GridSplitter ResizeDirection="Columns" 
+                          Grid.Row="3" 
+                          Grid.Column="0"
+                          Grid.ColumnSpan="2" 
+                          Background="DarkGray"
+                          Height="1" Width="Auto" 
+                          HorizontalAlignment="Stretch"/>
+
+            <GridSplitter ResizeDirection="Columns" 
+                          Grid.Row="5" 
+                          Grid.Column="0"
+                          Grid.ColumnSpan="2" 
+                          Background="DarkGray"
+                          Height="1" Width="Auto" 
+                          HorizontalAlignment="Stretch"/>
+        </Grid>
+
     </Grid>
 </UserControl>

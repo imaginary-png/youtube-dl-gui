@@ -18,51 +18,28 @@ using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui.ViewModels
 {
-    public class DownloadPageViewModel : BaseUserControlViewModel, INotifyPropertyChanged
+    public class DownloadPageViewModel : BaseUserControlViewModel
     {
-        private string _inputText;
-        private bool _useYoutubeDl;
-        private bool _bulkDownload;
+        private string _urlInputText;
+        private Settings _settings;
 
-        public string InputText
+        public string URLInputText
         {
-            get => _inputText;
+            get => _urlInputText;
             set
             {
-                if (value == _inputText) return;
-                _inputText = value;
-                OnPropertyChanged(nameof(InputText));
+                if (value == _urlInputText) return;
+                _urlInputText = value;
+                OnPropertyChanged(nameof(URLInputText));
             }
         }
-        
+
         public ObservableCollection<Job> Jobs { get; set; }
         public List<string> URLS { get; set; }
 
-        public bool UseYoutubeDl
-        {
-            get => _useYoutubeDl;
-            set
-            {
-                if (value == _useYoutubeDl) return;
-                _useYoutubeDl = value;
-                OnPropertyChanged(nameof(UseYoutubeDl));
-            }
-        }
-
-        public bool BulkDownload
-        {
-            get => _bulkDownload;
-            set
-            {
-                if (value == _bulkDownload) return;
-                _bulkDownload = value;
-                OnPropertyChanged(nameof(BulkDownload));
-            }
-        }
-
-        public ICommand AddURLsCommand { get; set; }
-        public ICommand ToggleDownloadCommand { get; set; }
-        public ICommand CancelRemoveJobCommand { get; set; }
+        public ICommand AddURLsCommand { get; private set; }
+        public ICommand ToggleDownloadCommand { get; private set; }
+        public ICommand CancelRemoveJobCommand { get; private set; }
 
 
         public DownloadPageViewModel()
@@ -70,22 +47,29 @@ namespace youtube_dl_gui.ViewModels
             Jobs = new ObservableCollection<Job>();
             URLS = new List<string>();
 
-            UseYoutubeDl = true; // use yt-dl as default, youtube-dl 2021.12.17 has issue with slow youtube downloads currently.
-            BulkDownload = true;
-            
+            //use default settings
+            _settings = new Settings();
+
+
             AddURLsCommand = new RelayCommand(async p => await AddURLs_Execute(), null);
             ToggleDownloadCommand = new RelayCommand(p => ToggleDownload_Execute(), null);
             CancelRemoveJobCommand = new RelayCommand(p => CancelRemoveJob_Execute((Job)p), null);
         }
 
+        //update settings - this is called from MainViewModel
+        public void UpdateSettings(Settings settings)
+        {
+            _settings = settings;
+        }
+
         private async Task AddURLs_Execute()
         {
-            if (string.IsNullOrWhiteSpace(InputText)) return;
+            if (string.IsNullOrWhiteSpace(URLInputText)) return;
 
-            var splitInput = Regex.Replace(InputText, @"\s+", " ").Trim().Split(" ");
+            var splitInput = Regex.Replace(URLInputText, @"\s+", " ").Trim().Split(" ");
             //maybe use a boolean on the textbox and button to set isHitTestVisible = false; while processing?
             //is clearing input before or after better ux? idk. after, but does it matter that much?
-            InputText = "";
+            URLInputText = "";
             var usedUrls = new List<string>();
 
             foreach (var s in splitInput)
@@ -97,7 +81,7 @@ namespace youtube_dl_gui.ViewModels
 
                 // using yt-dlp as default, since youtube-dl has slow dl for youtube.
                 // using height for video download to simplify GUI functionality.
-                var videoSource = new VideoSource(s, UseYoutubeDl, true);
+                var videoSource = new VideoSource(s, _settings.UseYoutubeDL, true);
 
                 //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats
                 //it uses a lot of cpu and mem
@@ -108,7 +92,7 @@ namespace youtube_dl_gui.ViewModels
 
         private void ToggleDownload_Execute()
         {
-            if (BulkDownload) DownloadInBulk();
+            if (_settings.BulkDownload) DownloadInBulk();
             else DownloadOneByOne();
         }
 
@@ -212,13 +196,13 @@ namespace youtube_dl_gui.ViewModels
                 ResolutionLabel = "best",
                 Height = "best" //height is needed for the view's combobox default selection
             };
-            source.Formats = new List<VideoFormat> {format};
+            source.Formats = new List<VideoFormat> { format };
             source.SelectedFormat = source.Formats[0].ResolutionLabel;
         }
         #endregion
 
         #region Download helpers
-        
+
         private async Task DownloadOneByOne()
         {
             foreach (var j in Jobs)
@@ -249,7 +233,7 @@ namespace youtube_dl_gui.ViewModels
                 var finTask = await Task.WhenAny(queueList);
                 queueList.Remove(finTask);
             }
-            
+
 
             Trace.WriteLine("===================================================\n" +
                             "Bulk Downloading... DONE!\n" +
@@ -261,13 +245,5 @@ namespace youtube_dl_gui.ViewModels
 
 
         #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
 }

@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using youtube_dl_gui.Commands;
-using youtube_dl_gui_wrapper;
-using youtube_dl_gui_wrapper.Annotations;
+using youtube_dl_gui.Models;
+using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui.ViewModels
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : ObservableObject
     {
         private BaseUserControlViewModel _currentView;
+        private string _text;
 
         public BaseUserControlViewModel CurrentView
         {
@@ -33,23 +26,40 @@ namespace youtube_dl_gui.ViewModels
         public BaseUserControlViewModel DownloadsPage { get; set; }
         public BaseUserControlViewModel SettingsPage { get; set; }
 
-        public ICommand ButtonCommand { get; set; }
-        public ICommand FontUpCommand { get; set; }
+        public ICommand ChangeViews { get; set; }
+        public ICommand FontUpCommand { get; set; } //ToDO
 
-
-
-        public string Text { get; set; }
+        public string Text
+        {
+            get => _text;
+            set
+            {
+                if (value == _text) return;
+                _text = value;
+                OnPropertyChanged(nameof(Text));
+            }
+        }
 
         public MainWindowViewModel()
         {
             DownloadsPage = new DownloadPageViewModel();
             SettingsPage = new SettingsViewModel();
+            
+            var settingsPage = SettingsPage as SettingsViewModel;
+            settingsPage.SettingsManager.PropertyChanged += SettingsUpdated;
+            SettingsUpdated(settingsPage.SettingsManager, null); //manually update settings on startup.
+
             CurrentView = DownloadsPage;
 
-            ButtonCommand = new RelayCommand(p => ChangeView((BaseUserControlViewModel)p), p => p is BaseUserControlViewModel);
+            ChangeViews = new RelayCommand(p => ChangeView((BaseUserControlViewModel)p), p => p is BaseUserControlViewModel);
         }
 
-
+        private void SettingsUpdated(object sender, PropertyChangedEventArgs e)
+        {
+            var settingsManager = sender as SettingsManager;
+            var downloadsPage = DownloadsPage as DownloadPageViewModel;
+            downloadsPage?.UpdateSettings(settingsManager.UserSettings);
+        }
 
         private void ChangeView(BaseUserControlViewModel viewModel)
         {
@@ -64,17 +74,7 @@ namespace youtube_dl_gui.ViewModels
             if (viewModel == SettingsPage)
             {
                 CurrentView = SettingsPage;
-                return;
             }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
