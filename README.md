@@ -9,7 +9,10 @@ Wraps some of the features of youtube-dl / yt-dlp.0
 You probably shouldn't. There are better youtube-dl GUI's out there that have much more features and development.  
 This is okay if you only need to download youtube videos and twitch VODs, as those are the only websites I have personally tested for my personal use.  
 
+Works okay with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
+
 Each website potentially has it's own quirks for what youtube-dl outputs which makes it difficult to cover all edge cases without thorough testing.  
+
 
 
 
