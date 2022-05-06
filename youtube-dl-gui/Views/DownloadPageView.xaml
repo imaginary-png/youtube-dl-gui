@@ -96,7 +96,7 @@
                 <DataGridTextColumn Header="Status"
                                     Width="*"
                                     Binding="{Binding Status}"></DataGridTextColumn>
-
+               
                 <DataGridTemplateColumn Header="Formats">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

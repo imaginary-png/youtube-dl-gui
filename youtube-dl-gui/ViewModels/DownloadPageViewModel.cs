@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,6 +86,11 @@ namespace youtube_dl_gui.ViewModels
             {
                 if (Jobs.FirstOrDefault(j => j.Source.URL == s) != null) continue;
                 if (usedUrls.Contains(s)) continue;
+                if (s.Contains("youtube") && s.Contains("&list=")) //handle youtube playlists
+                {
+                    AddYoutubePlayList(s);
+                    continue;
+                }
 
                 usedUrls.Add(s);
 
@@ -121,6 +127,20 @@ namespace youtube_dl_gui.ViewModels
         #region Helpers
 
         #region Video from URL helpers
+
+        private void AddYoutubePlayList(string url)
+        {
+            var source = new VideoSource(url, _settings.OutputFolder, _settings.UseYoutubeDL, true)
+            {
+                SelectedFormat = "best",
+                FileName = url + " playlist",
+                DownloadLog = { FileSize = "playlist" }
+            };
+            var format = new VideoFormat("best", "best", "best", "best", "best", "best", "best"); //just default to 'best' for download..
+            
+            source.Formats.Add(format);
+            Jobs.Add(new Job(source));
+        }
 
         /// <summary>
         /// Helper for getting video information.

@@ -69,6 +69,8 @@ namespace youtube_dl_gui_wrapper
             {
                 parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
                              $" -f \"bestaudio\" --newline"; //bestaudio
+                result = await Execute(parameters, outputDel, null, token: source.Token);
+                return result;
             }
             else if (useHeight) //try with separate video+audio stream first, then try just with video, then throw?
             {
