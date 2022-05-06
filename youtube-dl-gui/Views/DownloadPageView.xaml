@@ -36,6 +36,7 @@
 
         </TextBox>
 
+        <!-- Add Urls button -->
         <Button Grid.Row="2" Grid.Column="1"
                 Width="32" Height="32"
                 BorderThickness="1"
@@ -117,7 +118,6 @@
                 <!-- Cancel Job Button -->
                 <DataGridTemplateColumn Header=""
                                         Width="0.2*">
-                    <!-- Use converter ? convert job status to visible/hidden -->
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Command="{Binding ElementName=VideoSourceDataGrid,
@@ -139,6 +139,7 @@
 
             </DataGrid.Columns>
 
+            <!-- Row styles for background colour based on status -->
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
 
@@ -172,6 +173,7 @@
                 </Style>
             </DataGrid.RowStyle>
 
+            <!-- Trying to get rid of some of the default styling -->
             <DataGrid.CellStyle>
                 <Style TargetType="{x:Type DataGridCell}">
                     <Setter Property="Background" Value="{x:Null}" />
@@ -186,7 +188,7 @@
                 </Style>
 
             </DataGrid.CellStyle>
-
+            <!-- Corner radius for the datagrid, doesn't affect header-->
             <DataGrid.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="8"/>
@@ -197,7 +199,7 @@
 
         </DataGrid>
 
-
+        <!-- Download Button -->
         <Button Grid.Row="4" Grid.Column="1"
                 Width="32" Height="32"
                 BorderThickness="1"

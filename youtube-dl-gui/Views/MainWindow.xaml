@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:youtube_dl_gui.ViewModels"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="1600"
+        Title="MainWindow" Height="800" Width="1280"
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="True">
@@ -35,9 +35,10 @@
             BorderBrush="Gainsboro"
             CornerRadius="{StaticResource WindowCornerRadiusWindow}">
 
-        <Grid >
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width=".2*"/>
                 <ColumnDefinition Width="9*"/>
                 <ColumnDefinition Width=".2*"/>
             </Grid.ColumnDefinitions>
@@ -50,7 +51,7 @@
             </Grid.RowDefinitions>
 
             <!-- Custom Title Bar Section, span all columns -->
-            <Border Grid.Row="0" Grid.ColumnSpan="3" 
+            <Border Grid.Row="0" Grid.ColumnSpan="4" 
                     Background="{DynamicResource TitleBarColour}"
                     MouseDown="UIElement_OnMouseDown"
                     CornerRadius="{StaticResource WindowCornerRadiusMenuBar}">
@@ -127,7 +128,7 @@
                 </StackPanel>
             </StackPanel>
             <!-- Main Content-->
-            <ContentControl Grid.Row="2" Grid.Column="1"
+            <ContentControl Grid.Row="2" Grid.Column="2"
                             Content="{Binding CurrentView}" 
                              Grid.RowSpan="2"></ContentControl>
 
