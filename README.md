@@ -10,3 +10,14 @@ You probably shouldn't. There are better youtube-dl GUI's out there that have mu
 This is okay if you only need to download youtube videos and twitch VODs, as those are the only websites I have personally tested for my personal use.  
 
 Each website potentially has it's own quirks for what youtube-dl outputs which makes it difficult to cover all edge cases without thorough testing.  
+
+
+
+#### Icon Image attributions
+<a href="https://www.flaticon.com/free-icons/download" title="download icons">Download icons created by Ayub Irawan - Flaticon</a>  
+<a href="https://www.flaticon.com/free-icons/folder" title="folder icons">Folder icons created by Freepik - Flaticon</a>  
+<a href="https://www.flaticon.com/free-icons/settings" title="settings icons">Settings icons created by Freepik - Flaticon</a>  
+
+<a target="_blank" href="https://icons8.com/icon/8112/close">Close</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
+<a target="_blank" href="https://icons8.com/icon/11152/subtract">Subtract</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
+<a target="_blank" href="https://icons8.com/icon/vU8WkCSNnXng/maximize-button">Maximize Button</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
