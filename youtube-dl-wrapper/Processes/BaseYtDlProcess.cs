@@ -35,9 +35,11 @@ namespace youtube_dl_gui_wrapper
                 OutputFolder = outputFolder;
             }
         }
-        
+
         public async Task<bool> StartDownload(VideoSource source, bool useHeight = false)
-        {            
+        {
+            var result = false;
+
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
             {
@@ -47,30 +49,77 @@ namespace youtube_dl_gui_wrapper
                 if (args.Data.Contains("in")) return;          //last line of finished download is: [download] 100% of 115.06MiB in 00:10, ignore.
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
             });
+
+            var errorDel = new DataReceivedEventHandler((sender, args) =>
+            { //streams seem to output via err, twitch livestreams contain "stream", youtube and twitch clips don't... so I guess this sorta works
+                //not thoroughly tested.
+                if (args.Data == null) return;
+                if (!args.Data.Contains("stream") &&
+                    !args.Data.Contains("Stream")) return;
+                Trace.WriteLine("\n\n==============================================\nSTREM\n===============================\n\n");
+                source.DownloadLog.IsLiveStream = true;
+            });
+
             //currently hardcoded to assume selected format is a height value, not an actual format code. 
             string parameters;
 
-            
+
             if (source.SelectedFormat == "audio")
             {
                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
                              $" -f \"bestaudio\" --newline"; //bestaudio
             }
-            else if (useHeight && !source.URL.Contains("twitch.tv")) //twitch does not have multiple streams, can't use bestvideo+bestaudio
+            else if (useHeight) //try with separate video+audio stream first, then try just with video, then throw?
             {
-                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
-                             $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
+                try
+                {
+                    parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                                 $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
+                    result = await Execute(parameters, outputDel, null, token: source.Token);
+                    return result;
+                }
+                catch (ArgumentException e)
+                {
+                    //ignore, try args without audio stream
+                }
+
+                try
+                {
+                    //try without specifying vidoe/audio stream.
+                    parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                                 $" -f \"best[height={source.SelectedFormat}]\" --newline";
+                    result = await Execute(parameters, outputDel, errorDel, token: source.Token);
+                    return result;
+                }
+                catch (ArgumentException e)
+                {
+                    //ignore and try with selected format
+                }
             }
-            else
-            {
-                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
-                             $" -f {source.SelectedFormat} --newline";
-            }
+
+            //if not basing on height, try...
+            parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                         $" -f {source.SelectedFormat} --newline";
+
+            #region old, ignore, delete later
+
+            /* else if (useHeight && source.URL.Contains("twitch.tv")) //twitch does not have multiple streams, can't use bestvideo+bestaudio
+             {
+                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                              $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
+             }
+             else
+             {
+                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                              $" -f {source.SelectedFormat} --newline";
+             }*/
+
+            #endregion
 
             return await Execute(parameters, outputDel, null, token: source.Token);
         }
 
-        
+
         public async Task<List<VideoFormat>> GetFormats(string url)
         {
             var parameters = url + " -F";
@@ -112,7 +161,7 @@ namespace youtube_dl_gui_wrapper
             await Execute(parameters, outputDel);
             return filename;
         }
-        
+
         public async Task<string> GetDuration(string url)
         {
             var parameters = url + " --get-duration";
@@ -161,10 +210,10 @@ namespace youtube_dl_gui_wrapper
 
                 p.OutputDataReceived += (sender, args) =>
                 {
-                  /*  Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.BackgroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine($"Output: {args.Data}");
-                    Console.ResetColor();*/
+                    /*  Console.ForegroundColor = ConsoleColor.Yellow;
+                      Console.BackgroundColor = ConsoleColor.DarkGray;
+                      Console.WriteLine($"Output: {args.Data}");
+                      Console.ResetColor();*/
                     //Trace.WriteLine($"Output: {args.Data}");
                 };
                 p.OutputDataReceived += outputDel;
@@ -188,6 +237,7 @@ namespace youtube_dl_gui_wrapper
                 p.BeginOutputReadLine();
                 p.BeginErrorReadLine();
                 await p.WaitForExitAsync(token);
+
                 var exitCode = p.ExitCode;
 
                 if (errors.Count <= 0) return p.ExitCode == 0 ? true : false;

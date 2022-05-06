@@ -14,6 +14,7 @@ namespace youtube_dl_gui_wrapper.Models
         private string _fileSize;
         private string _downloaded;
         private string _eta;
+        private bool _isLiveStream;
 
         public string DownloadPercentage
         {
@@ -71,8 +72,16 @@ namespace youtube_dl_gui_wrapper.Models
             }
         }
 
-
-        
+        public bool IsLiveStream
+        {
+            get => _isLiveStream;
+            set
+            {
+                if (value == _isLiveStream) return;
+                _isLiveStream = value;
+                OnPropertyChanged(nameof(IsLiveStream));
+            }
+        }
 
 
         private void UpdateTotalDownloaded()

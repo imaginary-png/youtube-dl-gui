@@ -59,6 +59,15 @@ namespace youtube_dl_gui.Models
                 if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%" ) SetStatus(JobStatus.Success);
                 else SetStatus(JobStatus.Downloading);
             }
+            //if livestream, update to downloading...
+            if (e.PropertyName == nameof(Source.DownloadLog.IsLiveStream))
+            {
+                if (Source.DownloadLog.IsLiveStream)
+                {
+                    SetStatus(JobStatus.Downloading);
+                    Source.DownloadLog.FileSize = "Live Stream";
+                }
+            }
             //is selected format changes, set status ready for download
             else if (e.PropertyName == nameof(Source.SelectedFormat))
             {
