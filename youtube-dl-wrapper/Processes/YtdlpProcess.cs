@@ -26,9 +26,9 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Creates a <see cref="YtdlpProcess"/> with an exe path and output path.
         /// </summary>
-        /// <param name="outputFolder">Defaults to Desktop</param>
+        /// <param name="defaultOutputFolder">Defaults to Desktop</param>
         /// <param name="exe">Defaults to PATH - "yt-dlp.exe"</param>
-        public YtdlpProcess(string outputFolder, string exe = "yt-dlp.exe") : base(outputFolder, exe)
+        public YtdlpProcess(string defaultOutputFolder, string exe = "yt-dlp.exe") : base(defaultOutputFolder, exe)
         {
         }
 

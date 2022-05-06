@@ -58,7 +58,7 @@ namespace youtube_dl_gui.ViewModels
         {
             var settingsManager = sender as SettingsManager;
             var downloadsPage = DownloadsPage as DownloadPageViewModel;
-            downloadsPage?.UpdateSettings(settingsManager.UserSettings);
+            downloadsPage?.UpdateSettings(settingsManager?.UserSettings);
         }
 
         private void ChangeView(BaseUserControlViewModel viewModel)

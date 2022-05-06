@@ -26,9 +26,9 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Creates a <see cref="YoutubeDlProcess"/> with an exe path and output path.
         /// </summary>
-        /// <param name="outputFolder">Defaults to Desktop</param>
+        /// <param name="defaultOutputFolder">Defaults to Desktop</param>
         /// <param name="exe">Defaults to PATH - "youtube-dl.exe"</param>
-        public YoutubeDlProcess(string outputFolder, string exe = "youtube-dl.exe") : base(outputFolder, exe)
+        public YoutubeDlProcess(string defaultOutputFolder, string exe = "youtube-dl.exe") : base(defaultOutputFolder, exe)
         {
         }
 

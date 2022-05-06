@@ -51,7 +51,7 @@
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource SettingsSubTextFontColor}"
                            RenderOptions.ClearTypeHint="Enabled"
-                           >Use youtube-dl, or alternatively use yt-dlp. 
+                           >Use youtube-dl, or alternatively use yt-dlp. <LineBreak/>
                     As of youtube-dl 2021.12.17 - youtube downloads are slow, 
                     so recommend disabling this and using ytp-dl.
                 </TextBlock>
@@ -117,6 +117,7 @@
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Style="{DynamicResource SidePanelButtonStyle}"
+                    Command="{Binding OpenDirectoryCommand}"
                     >
                 <Image Source="/Images/folder.png" Height="25"></Image>
             </Button>

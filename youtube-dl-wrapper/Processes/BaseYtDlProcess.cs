@@ -11,7 +11,7 @@ namespace youtube_dl_gui_wrapper
     public abstract class BaseYtDlProcess : IYoutubeDownloadProcess
     {
         protected string Exe;
-        protected string OutputFolder = @"%USERPROFILE%\Desktop\";
+        protected string DefaultOutputFolder = @"%USERPROFILE%\Desktop\";
         protected string NamingScheme = "%(title)s-%(id)s-%(resolution)s.%(ext)s";
 
         /// <summary>
@@ -26,19 +26,20 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Creates with an output path and exe path.
         /// </summary>
-        /// <param name="outputFolder">Defaults to Desktop</param>
+        /// <param name="defaultOutputFolder">Defaults to Desktop</param>
         /// <param name="exe">Defaults to PATH</param>
-        protected BaseYtDlProcess(string outputFolder, string exe) : this(exe)
+        protected BaseYtDlProcess(string defaultOutputFolder, string exe) : this(exe)
         {
-            if (Directory.Exists(outputFolder))
+            if (Directory.Exists(defaultOutputFolder))
             {
-                OutputFolder = outputFolder;
+                DefaultOutputFolder = defaultOutputFolder;
             }
         }
 
         public async Task<bool> StartDownload(VideoSource source, bool useHeight = false)
         {
             var result = false;
+            var downloadFolder = Directory.Exists(source.OutputFolder) ? source.OutputFolder : DefaultOutputFolder;
 
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
@@ -66,14 +67,14 @@ namespace youtube_dl_gui_wrapper
 
             if (source.SelectedFormat == "audio")
             {
-                parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
                              $" -f \"bestaudio\" --newline"; //bestaudio
             }
             else if (useHeight) //try with separate video+audio stream first, then try just with video, then throw?
             {
                 try
                 {
-                    parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                    parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
                                  $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
                     result = await Execute(parameters, outputDel, null, token: source.Token);
                     return result;
@@ -85,8 +86,8 @@ namespace youtube_dl_gui_wrapper
 
                 try
                 {
-                    //try without specifying vidoe/audio stream.
-                    parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                    //try without specifying video/audio stream.
+                    parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
                                  $" -f \"best[height={source.SelectedFormat}]\" --newline";
                     result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                     return result;
@@ -98,19 +99,19 @@ namespace youtube_dl_gui_wrapper
             }
 
             //if not basing on height, try...
-            parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+            parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
                          $" -f {source.SelectedFormat} --newline";
 
             #region old, ignore, delete later
 
             /* else if (useHeight && source.URL.Contains("twitch.tv")) //twitch does not have multiple streams, can't use bestvideo+bestaudio
              {
-                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                 parameters = @$"-o {DefaultOutputFolder}{NamingScheme} " + source.URL +
                               $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
              }
              else
              {
-                 parameters = @$"-o {OutputFolder}{NamingScheme} " + source.URL +
+                 parameters = @$"-o {DefaultOutputFolder}{NamingScheme} " + source.URL +
                               $" -f {source.SelectedFormat} --newline";
              }*/
 

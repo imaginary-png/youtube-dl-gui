@@ -60,8 +60,17 @@ namespace youtube_dl_gui.ViewModels
         public void UpdateSettings(Settings settings)
         {
             _settings = settings;
+            UpdateOutPutFolder();
         }
 
+        private void UpdateOutPutFolder()
+        {
+            foreach (var job in Jobs)
+            {   //bother checking? or just assign either way?
+                if (job.Source.OutputFolder == _settings.OutputFolder) continue;
+                job.Source.OutputFolder = _settings.OutputFolder;
+            }
+        }
         private async Task AddURLs_Execute()
         {
             if (string.IsNullOrWhiteSpace(URLInputText)) return;
@@ -81,7 +90,7 @@ namespace youtube_dl_gui.ViewModels
 
                 // using yt-dlp as default, since youtube-dl has slow dl for youtube.
                 // using height for video download to simplify GUI functionality.
-                var videoSource = new VideoSource(s, _settings.UseYoutubeDL, true);
+                var videoSource = new VideoSource(s, _settings.OutputFolder ,_settings.UseYoutubeDL, true);
 
                 //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats
                 //it uses a lot of cpu and mem

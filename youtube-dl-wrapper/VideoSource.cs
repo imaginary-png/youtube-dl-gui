@@ -24,6 +24,7 @@ namespace youtube_dl_gui_wrapper
         public string URL { get; set; }
         public string FileName { get; set; }
         public string Duration { get; set; }
+        public string OutputFolder { get; set; }
         public bool UseHeightForDownload { get; set; }
 
         public List<VideoFormat> Formats
@@ -56,9 +57,10 @@ namespace youtube_dl_gui_wrapper
         /// Defaults to using youtube-dl
         /// </summary>
         /// <param name="url">Video URL</param>
+        /// <param name="outputFolder">Output folder to download to, defaults to desktop</param>
         /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
         /// <param name="useHeightForDownload">Use height as basis for video download, not format code</param>
-        public VideoSource(string url, bool useYoutubeDL = true, bool useHeightForDownload = false)
+        public VideoSource(string url, string outputFolder = "", bool useYoutubeDL = true, bool useHeightForDownload = false)
         {
             URL = url;
             FileName = String.Empty;
@@ -68,6 +70,7 @@ namespace youtube_dl_gui_wrapper
             DownloadLog = new DownloadInfo();
             _cancelToken = new CancellationTokenSource();
             Token = _cancelToken.Token;
+            OutputFolder = outputFolder;
             UseHeightForDownload = useHeightForDownload;
 
             if (useYoutubeDL) UseYoutubeDL();

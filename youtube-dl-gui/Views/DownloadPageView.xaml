@@ -96,9 +96,6 @@
                 <DataGridTextColumn Header="Status"
                                     Width="*"
                                     Binding="{Binding Status}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Stream"
-                                    Width="*"
-                                    Binding="{Binding Source.DownloadLog.IsLiveStream}"></DataGridTextColumn>
 
                 <DataGridTemplateColumn Header="Formats">
                     <DataGridTemplateColumn.CellTemplate>
