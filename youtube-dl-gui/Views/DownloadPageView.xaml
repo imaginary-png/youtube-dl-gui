@@ -13,18 +13,19 @@
 
     <Grid >
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*"/>
             <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="44"/>
             <RowDefinition Height="5*"/>
-            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="44 "/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="36"/>
         </Grid.ColumnDefinitions>
-       
-       
-            <TextBox Grid.Row="0" Grid.ColumnSpan="99" TextWrapping="Wrap" x:Name="InputTextBox" 
+
+
+        <TextBox Grid.Row="1" Grid.ColumnSpan="99" TextWrapping="Wrap" x:Name="InputTextBox" 
                      Background="{DynamicResource DownloadPageBackground}"
                      Text="{Binding URLInputText}">
             <TextBox.Resources>
@@ -35,19 +36,15 @@
 
         </TextBox>
 
-        <Button Grid.Row="1" Grid.Column="1"
-                Width="20" Height="20"
-                BorderThickness="0"
-                Background="#5FB9B0"
+        <Button Grid.Row="2" Grid.Column="1"
+                Width="32" Height="32"
+                BorderThickness="1"
+                BorderBrush="Black"
+                Background="{DynamicResource DownloadPageBackground}"
+                HorizontalAlignment="Right"
                 Foreground="#413D65"
-                Margin="0 0 0 0"
-            Command="{Binding AddURLsCommand}">
-
-            <TextBlock FontSize="30"
-                       Text="+"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Margin="0 -18 0 -10"/>
+                Command="{Binding AddURLsCommand}">
+            <Image Source="/Images/plus-fat.png" Height="16"/>
 
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
@@ -56,7 +53,8 @@
             </Button.Resources>
         </Button>
 
-        <DataGrid Grid.Row="2" Grid.ColumnSpan="99"
+
+        <DataGrid Grid.Row="3" Grid.ColumnSpan="99"
                   BorderThickness="0" x:Name="VideoSourceDataGrid" 
                   Background="{DynamicResource DownloadPageBackground}"
                   AutoGenerateColumns="False"
@@ -66,6 +64,7 @@
                   IsReadOnly="True"
                   ItemsSource="{Binding Jobs}"
                   MouseMove="VideoSourceDataGrid_OnMouseMove">
+
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name"
@@ -194,22 +193,21 @@
                 </Style>
             </DataGrid.Resources>
 
+
+
         </DataGrid>
 
-        <Button Grid.Row="3" Grid.Column="1"
-                Width="20" Height="20"
-                BorderThickness="0"
-                Background="#5FB9B0"
+
+        <Button Grid.Row="4" Grid.Column="1"
+                Width="32" Height="32"
+                BorderThickness="1"
+                BorderBrush="Black"
+                Background="{DynamicResource DownloadPageBackground}"
+                HorizontalAlignment="Right"
                 Foreground="#413D65"
-                Margin="0 0 0 0"
                 Click="ButtonBase_OnClick"
                 Command="{Binding ToggleDownloadCommand}">
-
-            <TextBlock FontSize="18"
-                       Text="V"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       Margin="0 -12 0 -10"/>
+            <Image Source="/Images/download-black.png"/>
 
             <Button.Resources>
                 <Style TargetType="{x:Type Border}">
@@ -218,6 +216,19 @@
             </Button.Resources>
         </Button>
 
+        <!-- Label TextBlocks - ugly-->
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   FontSize="14"
+                   VerticalAlignment="Bottom"
+                   Margin="0 0 0 4"
+                   Foreground="{DynamicResource DownloadPageBackground}">URLS</TextBlock>
 
+        <TextBlock Grid.Row="2"
+                   Grid.Column="0"
+                   FontSize="14"
+                   VerticalAlignment="Bottom"
+                   Margin="0 0 0 4"
+                   Foreground="{DynamicResource DownloadPageBackground}">Videos</TextBlock>
     </Grid>
 </UserControl>
