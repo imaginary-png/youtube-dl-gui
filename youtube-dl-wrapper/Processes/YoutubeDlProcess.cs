@@ -13,7 +13,7 @@ namespace youtube_dl_gui_wrapper
         /// Creates a <see cref="YoutubeDlProcess"/> with an exe path.
         /// </summary>
         /// <param name="exe">Defaults to PATH - "youtube-dl.exe"</param>
-        public YoutubeDlProcess(string exe = "youtube-dl.exe") : base(exe)
+        public YoutubeDlProcess(string exe = "youtube-dl.exe") : base(ValidateExePath(exe) ? exe : "youtube-dl.exe")//checks if the path exists, else pass through PATH of exe instead.
         {
         }
         /// <summary>

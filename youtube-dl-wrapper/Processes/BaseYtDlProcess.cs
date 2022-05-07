@@ -196,6 +196,7 @@ namespace youtube_dl_gui_wrapper
         {
             Trace.WriteLine($"\n\n======================================\n" +
                             $"Using these params: {parameters}\n" +
+                            $"Using Exe Path: {Exe}\n" +
                             $"======================================");
             var errors = new List<string>();
 
@@ -207,7 +208,7 @@ namespace youtube_dl_gui_wrapper
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    FileName = Exe, //load custom file location later... File.Exists()... from user config... etc.
+                    FileName = Exe,
                     Arguments = parameters
                 };
 
@@ -255,6 +256,18 @@ namespace youtube_dl_gui_wrapper
                 throw new ArgumentException(errMsg);
             }
         }
+
+        /// <summary>
+        /// Checks if the executable path exists.
+        /// </summary>
+        /// <param name="exePath"></param>
+        /// <returns></returns>
+        public static bool ValidateExePath(string exePath)
+        {
+            if (File.Exists(exePath)) return true;
+            else return false;
+        }
+
         /// <summary>
         /// Takes youtube-dl's -F output and extracts relevant data into a List of <see cref="VideoFormat"/>
         /// </summary>
@@ -275,6 +288,5 @@ namespace youtube_dl_gui_wrapper
         /// <param name="toUpdate"><see cref="DownloadInfo"/> object to update</param>
         /// <param name="info">Log Line to extract download data from</param>
         protected abstract void UpdateDownloadInfo(DownloadInfo toUpdate, string info);
-
     }
 }

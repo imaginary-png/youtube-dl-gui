@@ -15,6 +15,7 @@ namespace youtube_dl_gui_wrapper
         private List<VideoFormat> _formats;
         private string _selectedFormat;
 
+        public string ExePath { get; set; }
         public string URL { get; set; }
         public string FileName { get; set; }
         public string Duration { get; set; }
@@ -54,7 +55,7 @@ namespace youtube_dl_gui_wrapper
         /// <param name="outputFolder">Output folder to download to, defaults to desktop</param>
         /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
         /// <param name="useHeightForDownload">Use height as basis for video download, not format code</param>
-        public VideoSource(string url, string outputFolder = "", bool useYoutubeDL = true, bool useHeightForDownload = false)
+        public VideoSource(string url, string outputFolder = "", bool useYoutubeDL = true, bool useHeightForDownload = true, string exePath = "")
         {
             URL = url;
             FileName = String.Empty;
@@ -66,6 +67,7 @@ namespace youtube_dl_gui_wrapper
             Token = _cancelToken.Token;
             OutputFolder = outputFolder;
             UseHeightForDownload = useHeightForDownload;
+            ExePath = exePath;
 
             if (useYoutubeDL) UseYoutubeDL();
             else UseYTDLP();
@@ -134,19 +136,12 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Use yt-dlp.exe
         /// </summary>
-        public void UseYTDLP()
-        {
-            //check if in use before replacing?
-            _process = new YtdlpProcess();
-        }
+        public void UseYTDLP() => _process = new YtdlpProcess(ExePath);
 
         /// <summary>
         /// use youtube-dl.exe
         /// </summary>
-        public void UseYoutubeDL()
-        {
-            _process = new YoutubeDlProcess();
-        }
+        public void UseYoutubeDL() => _process = new YoutubeDlProcess(ExePath);
 
         #region Format Selection 
 
@@ -183,7 +178,6 @@ namespace youtube_dl_gui_wrapper
             _cancelToken = new CancellationTokenSource();
             Token = _cancelToken.Token;
         }
-
         #endregion
     }
 }

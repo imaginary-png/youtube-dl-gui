@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Exe\**" />
+    <EmbeddedResource Remove="Exe\**" />
+    <None Remove="Exe\**" />
+    <Page Remove="Exe\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Images\close" />
     <None Remove="Images\download-black.png" />
     <None Remove="Images\download.png" />

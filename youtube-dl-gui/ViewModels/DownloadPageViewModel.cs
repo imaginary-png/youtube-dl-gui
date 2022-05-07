@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,8 +16,13 @@ namespace youtube_dl_gui.ViewModels
 {
     public class DownloadPageViewModel : BaseUserControlViewModel
     {
+        //default executable file locations which should be located in the downloadable release.
+        private readonly string DefaultYoutubeDlExePath;
+        private readonly string DefaultYtDlpExePath;
+
         private string _urlInputText;
         private Settings _settings;
+
 
         public string URLInputText
         {
@@ -39,6 +45,9 @@ namespace youtube_dl_gui.ViewModels
 
         public DownloadPageViewModel()
         {
+            DefaultYoutubeDlExePath = Path.GetFullPath(@"Exe\youtube-dl.exe");
+            DefaultYtDlpExePath = Path.GetFullPath(@"Exe\yt-dlp.exe");
+
             Jobs = new ObservableCollection<Job>();
             URLS = new List<string>();
 
@@ -70,8 +79,10 @@ namespace youtube_dl_gui.ViewModels
         {
             if (string.IsNullOrWhiteSpace(URLInputText)) return;
 
+            var exePath = GetExePath();
+
             var splitInput = Regex.Replace(URLInputText, @"\s+", " ").Trim().Split(" ");
-            //maybe use a boolean on the textbox and button to set isHitTestVisible = false; while processing?
+
             //is clearing input before or after better ux? idk. after, but does it matter that much?
             URLInputText = "";
             var usedUrls = new List<string>();
@@ -82,18 +93,16 @@ namespace youtube_dl_gui.ViewModels
                 if (usedUrls.Contains(s)) continue;
                 if (s.Contains("youtube") && s.Contains("&list=")) //handle youtube playlists
                 {
-                    AddYoutubePlayList(s);
+                    AddYoutubePlayList(s, exePath);
                     continue;
                 }
 
                 usedUrls.Add(s);
 
-                // using yt-dlp as default, since youtube-dl has slow dl for youtube.
                 // using height for video download to simplify GUI functionality.
-                var videoSource = new VideoSource(s, _settings.OutputFolder, _settings.UseYoutubeDL, true);
+                var videoSource = new VideoSource(s, _settings.OutputFolder, _settings.UseYoutubeDL, true, exePath);
 
-                //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats
-                //it uses a lot of cpu and mem
+                //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats, it uses a lot of cpu
                 await GetVideoData(videoSource);
             }
 
@@ -122,9 +131,9 @@ namespace youtube_dl_gui.ViewModels
 
         #region Video from URL helpers
 
-        private void AddYoutubePlayList(string url)
+        private void AddYoutubePlayList(string url, string exePath)
         {
-            var source = new VideoSource(url, _settings.OutputFolder, _settings.UseYoutubeDL, true)
+            var source = new VideoSource(url, _settings.OutputFolder, _settings.UseYoutubeDL, true, exePath)
             {
                 SelectedFormat = "best",
                 FileName = url + " playlist",
@@ -169,6 +178,15 @@ namespace youtube_dl_gui.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets the path to the youtube-dl / yt-dlp executable
+        /// </summary>
+        /// <returns></returns>
+        private string GetExePath()
+        {
+            if (_settings.UseYoutubeDL) return DefaultYoutubeDlExePath;
+            else return DefaultYtDlpExePath;
+        }
 
         /// <summary>
         /// Removes duplicate 'resolution labels', since to keep this program simple we will only allow selection of resolution for download, e.g. 720p, 1440p, etc.
@@ -231,8 +249,9 @@ namespace youtube_dl_gui.ViewModels
             foreach (var j in Jobs)
             {
                 if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
+                Trace.WriteLine($"Starting Job: {j.Source.FileName}\n");
                 await j.Source.Download();
-                Trace.WriteLine($"\n{j.Source.FileName} Finished\n");
+                Trace.WriteLine($"\nFinished Job: {j.Source.FileName}\n");
                 //else something went wrong, fail? cancelled?
             }
         }
@@ -247,7 +266,7 @@ namespace youtube_dl_gui.ViewModels
             foreach (var j in Jobs)
             {
                 if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
-                Trace.WriteLine("Adding Job" + j.Source.FileName);
+                Trace.WriteLine("Adding Job " + j.Source.FileName);
                 queueList.Add(j.Source.Download());
             }
 
