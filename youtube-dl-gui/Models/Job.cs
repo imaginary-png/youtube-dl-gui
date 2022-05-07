@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.Tracing;
-using System.Security.Cryptography.Pkcs;
 using System.Threading.Tasks;
 using youtube_dl_gui_wrapper;
 using youtube_dl_gui_wrapper.Annotations;
@@ -32,7 +30,7 @@ namespace youtube_dl_gui.Models
                 OnPropertyChanged(nameof(Status));
             }
         }
-        
+
 
         public VideoSource Source { get; set; }
 
@@ -56,7 +54,7 @@ namespace youtube_dl_gui.Models
             //update download log
             if (e.PropertyName == nameof(Source.DownloadLog.DownloadPercentage))
             {   //yt-dlp - no decimal, youtube-dl decimal... for 100%
-                if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%" ) SetStatus(JobStatus.Success);
+                if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%") SetStatus(JobStatus.Success);
                 else SetStatus(JobStatus.Downloading);
             }
             //if livestream, update to downloading...

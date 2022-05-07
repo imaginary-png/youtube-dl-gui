@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.ComponentModel;
 using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui.Models

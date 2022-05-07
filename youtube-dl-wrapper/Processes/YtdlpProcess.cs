@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui_wrapper
@@ -37,15 +33,15 @@ namespace youtube_dl_gui_wrapper
 
         #region available video format helpers
 
-        
+
         protected override List<VideoFormat> ExtractInfoForFormats(List<string> formatList)
         {
             var videoFormats = new List<VideoFormat>();
-           
-            var toRemove = formatList.FindIndex( s => s.Contains("RESOLUTION"));
+
+            var toRemove = formatList.FindIndex(s => s.Contains("RESOLUTION"));
             Console.WriteLine($"\nTO REMOVE {toRemove}\n");
 
-            formatList.RemoveRange(0, toRemove+2); //remove lines that are not relevant.
+            formatList.RemoveRange(0, toRemove + 2); //remove lines that are not relevant.
 
             formatList.ForEach(Console.WriteLine);
 
@@ -59,7 +55,7 @@ namespace youtube_dl_gui_wrapper
             return videoFormats;
         }
 
-        
+
         protected override VideoFormat GetVideoFormatFromString(string formatStringArr)
         {
             var split = Regex.Replace(formatStringArr, @"\s+", " ").Split(" ");

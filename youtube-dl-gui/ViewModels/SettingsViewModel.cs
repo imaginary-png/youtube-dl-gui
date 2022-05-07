@@ -1,13 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Windows.Input;
-using Microsoft.Win32;
 using youtube_dl_gui.Commands;
 using youtube_dl_gui.Models;
-using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui.ViewModels
 {
@@ -61,7 +55,7 @@ namespace youtube_dl_gui.ViewModels
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                SettingsManager.UserSettings.OutputFolder = dialog.SelectedPath+"\\";
+                SettingsManager.UserSettings.OutputFolder = dialog.SelectedPath + "\\";
             }
         }
     }

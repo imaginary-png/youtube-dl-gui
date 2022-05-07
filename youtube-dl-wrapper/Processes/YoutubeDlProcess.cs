@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui_wrapper
@@ -54,7 +47,7 @@ namespace youtube_dl_gui_wrapper
             return videoFormats;
         }
 
-        
+
         protected override VideoFormat GetVideoFormatFromString(string formatStringArr)
         {
             var split = Regex.Replace(formatStringArr, @"\s+", " ").Split(" ");
@@ -62,7 +55,7 @@ namespace youtube_dl_gui_wrapper
             var formatCode = split[0];
             var ext = split[1];
             var resolution = split[2];
-            var resolutionLabel = resolution == "audio"? "audio" : split[3];
+            var resolutionLabel = resolution == "audio" ? "audio" : split[3];
             var height = string.Empty;
             var width = string.Empty;
             var fps = Regex.Match(formatStringArr, @"\d+fps").Groups[0].Value;

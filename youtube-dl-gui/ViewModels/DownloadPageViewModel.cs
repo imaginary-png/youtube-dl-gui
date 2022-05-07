@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.VisualBasic.CompilerServices;
 using youtube_dl_gui.Commands;
 using youtube_dl_gui.Models;
 using youtube_dl_gui_wrapper;
-using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui.ViewModels
 {
@@ -96,7 +90,7 @@ namespace youtube_dl_gui.ViewModels
 
                 // using yt-dlp as default, since youtube-dl has slow dl for youtube.
                 // using height for video download to simplify GUI functionality.
-                var videoSource = new VideoSource(s, _settings.OutputFolder ,_settings.UseYoutubeDL, true);
+                var videoSource = new VideoSource(s, _settings.OutputFolder, _settings.UseYoutubeDL, true);
 
                 //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats
                 //it uses a lot of cpu and mem
@@ -137,7 +131,7 @@ namespace youtube_dl_gui.ViewModels
                 DownloadLog = { FileSize = "playlist" }
             };
             var format = new VideoFormat("best", "best", "best", "best", "best", "best", "best"); //just default to 'best' for download..
-            
+
             source.Formats.Add(format);
             Jobs.Add(new Job(source));
         }

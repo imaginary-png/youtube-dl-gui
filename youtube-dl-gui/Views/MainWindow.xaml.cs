@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace youtube_dl_gui.Views
 {

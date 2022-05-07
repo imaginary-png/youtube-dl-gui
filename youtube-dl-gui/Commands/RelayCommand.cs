@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Input;
 
 namespace youtube_dl_gui.Commands
@@ -33,7 +32,7 @@ namespace youtube_dl_gui.Commands
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public void Execute(object parameter) { _execute(parameter);}
+        public void Execute(object parameter) { _execute(parameter); }
         #endregion // ICommand Members 
     }
 }

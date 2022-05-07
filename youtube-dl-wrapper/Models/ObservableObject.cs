@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui_wrapper.Models

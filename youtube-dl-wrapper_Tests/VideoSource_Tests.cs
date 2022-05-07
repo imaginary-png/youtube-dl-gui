@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Xunit;
 using youtube_dl_gui_wrapper;
 
@@ -11,7 +10,7 @@ namespace youtube_dl_wrapper_Tests
         private readonly string realURL = @"https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
         [Fact]
-        public async void Formats_HasNoCountWhenIncorrectURL ()
+        public async void Formats_HasNoCountWhenIncorrectURL()
         {
             //arrange
             var source = new VideoSource(fakeURL);
@@ -23,7 +22,7 @@ namespace youtube_dl_wrapper_Tests
             }
             catch (ArgumentException)
             {
-                
+
             }
             var actual = source.Formats.Count > 0;
 
@@ -32,7 +31,7 @@ namespace youtube_dl_wrapper_Tests
         }
 
         [Fact]
-        public async void Formats_HasCountWhenCorrectURL ()
+        public async void Formats_HasCountWhenCorrectURL()
         {
             //arrange
             var source = new VideoSource(realURL);
@@ -44,7 +43,7 @@ namespace youtube_dl_wrapper_Tests
             }
             catch (ArgumentException)
             {
-                
+
             }
             var actual = source.Formats.Count > 0;
 
@@ -89,7 +88,7 @@ namespace youtube_dl_wrapper_Tests
             {
                 errorMsg = e.Message;
             }
-            
+
             //assert
             Assert.True(errorMsg.Length == 0);
         }

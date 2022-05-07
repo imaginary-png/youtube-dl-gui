@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using youtube_dl_gui.Commands;
 using youtube_dl_gui.Models;
@@ -44,7 +43,7 @@ namespace youtube_dl_gui.ViewModels
         {
             DownloadsPage = new DownloadPageViewModel();
             SettingsPage = new SettingsViewModel();
-            
+
             var settingsPage = SettingsPage as SettingsViewModel;
             settingsPage.SettingsManager.PropertyChanged += SettingsUpdated;
             SettingsUpdated(settingsPage.SettingsManager, null); //manually update settings on startup.

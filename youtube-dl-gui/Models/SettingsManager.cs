@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Newtonsoft.Json;
 using System.IO;
-using Newtonsoft.Json;
 using youtube_dl_gui_wrapper.Models;
 
 namespace youtube_dl_gui.Models
@@ -35,7 +34,7 @@ namespace youtube_dl_gui.Models
             }
             CreateDefaultSettings();
         }
-       
+
         public void SaveSettings()
         {
             File.WriteAllText(ConfigFileLocation, JsonConvert.SerializeObject(UserSettings, Formatting.Indented));

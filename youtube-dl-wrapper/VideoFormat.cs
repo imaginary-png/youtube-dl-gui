@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace youtube_dl_gui_wrapper
 {
@@ -9,7 +8,7 @@ namespace youtube_dl_gui_wrapper
         public string Extension { get; set; }
         public string Resolution { get; set; }
         public string ResolutionLabel { get; set; }
-        public string Height { get; set; } 
+        public string Height { get; set; }
         public string Width { get; set; }
         public string Fps { get; set; }
         public string FileSize { get; set; }
@@ -55,8 +54,8 @@ namespace youtube_dl_gui_wrapper
                    $"Extension: {Extension}\n" +
                    $"Resolution: {Resolution}\n" +
                    $"ResolutionLabel: {ResolutionLabel}\n" +
-                   $"Height: {Height}\n"+
-                   $"Width: {Width}\n"+
+                   $"Height: {Height}\n" +
+                   $"Width: {Width}\n" +
                    $"Fps: {Fps}\n" +
                    $"Size: {FileSize}\n";
         }

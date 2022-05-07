@@ -1,9 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Globalization;
-using System.IO;
-using System.Runtime.CompilerServices;
-using youtube_dl_gui_wrapper.Annotations;
 
 namespace youtube_dl_gui_wrapper.Models
 {
@@ -87,10 +83,10 @@ namespace youtube_dl_gui_wrapper.Models
         private void UpdateTotalDownloaded()
         {
             if (string.IsNullOrEmpty(_fileSize) || _downloadPercentage == string.Empty) return;
-            string unit = _fileSize.Substring(_fileSize.Length - 3); 
+            string unit = _fileSize.Substring(_fileSize.Length - 3);
             double percent = Double.Parse(_downloadPercentage.Replace("%", ""));
             double size = Double.Parse(_fileSize.Remove(_fileSize.Length - 3));
-            Downloaded = (Math.Round(percent/100 * size,2)).ToString(CultureInfo.InvariantCulture)+ unit;
+            Downloaded = (Math.Round(percent / 100 * size, 2)).ToString(CultureInfo.InvariantCulture) + unit;
         }
 
         public override string ToString()
