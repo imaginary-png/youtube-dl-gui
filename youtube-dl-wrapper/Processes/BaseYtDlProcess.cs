@@ -163,7 +163,7 @@ namespace youtube_dl_gui_wrapper
                 if (string.IsNullOrWhiteSpace(args.Data)) return;
 
                 if (string.IsNullOrEmpty(filename)) filename += args.Data;
-                Trace.WriteLine($"\n\n===========================\n" +
+                Trace.WriteLine($"\n===========================\n" +
                                 $"filename: {filename}\n" +
                                 $"args.data: {args.Data}\n" +
                                 $"================================");
@@ -181,7 +181,7 @@ namespace youtube_dl_gui_wrapper
             {
                 if (string.IsNullOrWhiteSpace(args.Data)) return;
                 if (string.IsNullOrEmpty(duration)) duration += args.Data;
-                Trace.WriteLine($"\n\n===========================\n" +
+                Trace.WriteLine($"\n===========================\n" +
                                 $"duration: {duration}\n" +
                                 $"args.data: {args.Data}\n" +
                                 $"================================");
@@ -189,6 +189,25 @@ namespace youtube_dl_gui_wrapper
 
             await Execute(parameters, outputDel);
             return duration;
+        }
+
+        public async Task<List<string>> GetFileNameAndDuration(string url)
+        {
+            var parameters = $"\"{url}\" --get-filename --get-duration";
+            var filenameAndDuration = new List<string>();
+            var outputDel = new DataReceivedEventHandler(((sender, args) =>
+            {
+                if (string.IsNullOrWhiteSpace(args.Data)) return;
+                filenameAndDuration.Add(args.Data);
+                Trace.WriteLine($"\n===========================\n" +
+                                $"filename + duration\n" +
+                                $"args.data: {args.Data}\n" +
+                                $"================================");
+
+            }));
+
+            await Execute(parameters, outputDel);
+            return filenameAndDuration;
         }
 
         /// <summary>

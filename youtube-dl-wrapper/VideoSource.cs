@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Models;
@@ -14,11 +15,34 @@ namespace youtube_dl_gui_wrapper
         private IYoutubeDownloadProcess _process;
         private List<VideoFormat> _formats;
         private string _selectedFormat;
+        private string _fileName;
+        private string _duration;
 
         public string ExePath { get; set; }
         public string URL { get; set; }
-        public string FileName { get; set; }
-        public string Duration { get; set; }
+
+        public string FileName
+        {
+            get => _fileName;
+            set
+            {
+                if (value == _fileName) return;
+                _fileName = value;
+                OnPropertyChanged(nameof(FileName));
+            }
+        }
+
+        public string Duration
+        {
+            get => _duration;
+            set
+            {
+                if (value == _duration) return;
+                _duration = value;
+                OnPropertyChanged(nameof(Duration));
+            }
+        }
+
         public string OutputFolder { get; set; }
         public bool UseHeightForDownload { get; set; }
 
@@ -93,6 +117,19 @@ namespace youtube_dl_gui_wrapper
         public async Task GetDuration()
         {
             Duration = await _process.GetDuration(URL);
+        }
+        public async Task GetFileNameAndDuration()
+        {
+            var list = await _process.GetFileNameAndDuration(URL);
+            if (list.Count >= 2) //if more than 2, must be playlist, but just record the first vids details.
+            {
+                FileName = list[0];
+                Duration = list[1];
+            }
+            else if (list.Count == 1)
+            {
+                FileName = list[0];
+            }
         }
 
 

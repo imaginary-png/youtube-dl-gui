@@ -139,6 +139,7 @@ namespace youtube_dl_gui.ViewModels
                 FileName = url + " playlist",
                 DownloadLog = { FileSize = "playlist" }
             };
+            source.GetFileName();
             var format = new VideoFormat("best", "best", "best", "best", "best", "best", "best"); //just default to 'best' for download..
 
             source.Formats.Add(format);
@@ -155,10 +156,8 @@ namespace youtube_dl_gui.ViewModels
             var errors = "";
             try
             {
-                await Task.WhenAll(videoSource.GetFileName(),
-                    videoSource.GetDuration(),
-                    videoSource.GetVideoFormats());
-
+                videoSource.GetFileNameAndDuration();
+                await videoSource.GetVideoFormats();
                 SimplifyFormatsToUniqueResolutionsOnly(videoSource);
                 Jobs.Add(new Job(videoSource));
             }

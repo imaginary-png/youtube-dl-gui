@@ -34,5 +34,12 @@ namespace youtube_dl_gui_wrapper
         /// <param name="url"></param>
         /// <returns></returns>
         Task<string> GetDuration(string url);
+
+        /// <summary>
+        /// Returns Filename and duration, in that order. Uses args "--get-filename --get-duration"
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        Task<List<string>> GetFileNameAndDuration(string url);
     }
 }
