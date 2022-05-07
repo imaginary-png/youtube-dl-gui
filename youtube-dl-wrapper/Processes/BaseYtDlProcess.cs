@@ -50,17 +50,15 @@ namespace youtube_dl_gui_wrapper
 
             //start download with output delegate that updates the videoSource.DownloadInfo -- using helper methods to extract relevant data.
             var outputDel = new DataReceivedEventHandler((object sender, DataReceivedEventArgs args) =>
-            {
+            {   //example output:  [download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
                 if (args.Data == null ||
-                    !(args.Data.Contains("[download]") &&   //if line doesn't contain strings [download] and %, e.g.,
-                      args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
-                if (args.Data.Contains("in")) return;          //last line of finished download is: [download] 100% of 115.06MiB in 00:10, ignore.
-                UpdateDownloadInfo(source.DownloadLog, args.Data);
+                    !(args.Data.Contains("[download]"))) return; //if line doesn't contain [download]   
+                if (args.Data.Contains("in")) return;            //last line of finished download is: [download] 100% of 115.06MiB in 00:10, ignore.
+                if (args.Data.Contains("% of")) UpdateDownloadInfo(source.DownloadLog, args.Data); //if line contains "% of", normal download progress
 
-                if (Regex.Match(args.Data, @"\d+ of \d+").Success)
-                {
-                    UpdatePlaytlistInfo(source, args.Data);
-                }
+                //playlist "video 1 of 3", doesn't show with --newline arg...
+                if (Regex.Match(args.Data, @"\d+ of \d+").Success) UpdatePlaylistInfo(source, args.Data); //else if its playlist progress
+
             });
 
             var errorDel = new DataReceivedEventHandler((sender, args) =>
@@ -80,7 +78,7 @@ namespace youtube_dl_gui_wrapper
             {
                 parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                              $" -f \"bestaudio\" --newline"; //bestaudio
-                result = await Execute(parameters, outputDel, null, token: source.Token);
+                result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                 return result;
             }
             else if (useHeight) //try with separate video+audio stream first, then try just with video, then throw?
@@ -89,7 +87,7 @@ namespace youtube_dl_gui_wrapper
                 {
                     parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                                  $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
-                    result = await Execute(parameters, outputDel, null, token: source.Token);
+                    result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                     return result;
                 }
                 catch (ArgumentException e)
@@ -118,13 +116,13 @@ namespace youtube_dl_gui_wrapper
             {
                 parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                              $" --newline";
-                return await Execute(parameters, outputDel, null, token: source.Token);
+                return await Execute(parameters, outputDel, errorDel, token: source.Token);
             }
 
             parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                          $" -f {source.SelectedFormat} --newline";
 
-            return await Execute(parameters, outputDel, null, token: source.Token);
+            return await Execute(parameters, outputDel, errorDel, token: source.Token);
         }
 
 
@@ -285,10 +283,11 @@ namespace youtube_dl_gui_wrapper
             }
         }
 
-
-        private void UpdatePlaytlistInfo(VideoSource source, string data)
+        //does not work with --newline arg.
+        private void UpdatePlaylistInfo(VideoSource source, string data)
         {
             // get \d+ of \d from string and update duration
+            source.Duration = Regex.Match(data, @"\d+ of \d+").Groups[1].Value;
         }
 
         /// <summary>
