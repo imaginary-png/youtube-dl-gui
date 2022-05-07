@@ -46,7 +46,7 @@
                            FontWeight="DemiBold"
                            Foreground="{DynamicResource SettingsFontColor}"/>
 
-                <TextBlock FontSize="14"
+                <TextBlock FontSize="12"
                            Margin="0 8 0 0"
                            TextWrapping="Wrap"
                            Foreground="{DynamicResource SettingsSubTextFontColor}"
