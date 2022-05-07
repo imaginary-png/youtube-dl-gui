@@ -40,7 +40,9 @@ namespace youtube_dl_gui.ViewModels
             OpenDirectoryCommand = new RelayCommand(p => OpenDirectory_Execute(), null);
         }
 
+        //used for save settings button -- removed for more fluid design but kept in case.
         private void SaveSettings_Execute() => SettingsManager.SaveSettings();
+
 
         private void OpenDirectory_Execute()
         {
@@ -64,3 +66,23 @@ namespace youtube_dl_gui.ViewModels
         }
     }
 }
+
+/* xaml for old save button.
+ *    <Button Grid.Row="6" 
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Margin="0 80 0 0"
+                    Width="50"
+                    Height="30"
+                    Command="{Binding SaveCommand}">
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center">Save</TextBlock>
+
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="4 4 4 4"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+ */

@@ -53,7 +53,7 @@
                            RenderOptions.ClearTypeHint="Enabled"
                            >Use youtube-dl, or alternatively use yt-dlp. <LineBreak/>
                     As of youtube-dl 2021.12.17 - youtube downloads are slow, 
-                    so recommend disabling this and using ytp-dl.
+                    so recommend using ytp-dl. Changes only apply to newly added URLs.
                 </TextBlock>
 
             </StackPanel>
@@ -123,24 +123,7 @@
             </Button>
 
             <!-- Save Button -->
-            <Button Grid.Row="6" 
-                    Grid.Column="1"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Right"
-                    Margin="0 80 0 0"
-                    Width="50"
-                    Height="30"
-                    Command="{Binding SaveCommand}">
-                <TextBlock HorizontalAlignment="Center"
-                           VerticalAlignment="Center">Save</TextBlock>
-
-                <Button.Resources>
-                    <Style TargetType="{x:Type Border}">
-                        <Setter Property="CornerRadius" Value="4 4 4 4"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
-
+         
             <!-- separators -->
             <GridSplitter ResizeDirection="Columns" 
                           Grid.Row="1" 

@@ -15,6 +15,8 @@ namespace youtube_dl_gui.Models
         public SettingsManager()
         {
             LoadSettings();
+            //just save settings every time something changes.
+            UserSettings.PropertyChanged += ((sender, args) => SaveSettings());
         }
 
         public void LoadSettings()
@@ -33,7 +35,7 @@ namespace youtube_dl_gui.Models
             }
             CreateDefaultSettings();
         }
-
+       
         public void SaveSettings()
         {
             File.WriteAllText(ConfigFileLocation, JsonConvert.SerializeObject(UserSettings, Formatting.Indented));
