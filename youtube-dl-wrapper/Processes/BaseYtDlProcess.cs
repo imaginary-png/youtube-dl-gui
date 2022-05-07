@@ -69,7 +69,6 @@ namespace youtube_dl_gui_wrapper
                 if (args.Data == null) return;
                 if (!args.Data.Contains("stream") &&
                     !args.Data.Contains("Stream")) return;
-                Trace.WriteLine("\n\n==============================================\nSTREM\n===============================\n\n");
                 source.DownloadLog.IsLiveStream = true;
             });
 
@@ -148,8 +147,8 @@ namespace youtube_dl_gui_wrapper
             //do something else if the URL is a playlist....
 
             var formats = ExtractInfoForFormats(formatOutputList);
-            
-            formatOutputList.ForEach(s =>Trace.WriteLine(s));
+
+            formatOutputList.ForEach(s => Trace.WriteLine(s));
             formatOutputList.ForEach(Console.WriteLine);
             return formats;
         }
@@ -162,7 +161,7 @@ namespace youtube_dl_gui_wrapper
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
             {
                 if (string.IsNullOrWhiteSpace(args.Data)) return;
-               
+
                 if (string.IsNullOrEmpty(filename)) filename += args.Data;
                 Trace.WriteLine($"\n\n===========================\n" +
                                 $"filename: {filename}\n" +
@@ -179,7 +178,7 @@ namespace youtube_dl_gui_wrapper
             var parameters = $"\"{url}\" --get-duration";
             var duration = string.Empty;
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
-            { 
+            {
                 if (string.IsNullOrWhiteSpace(args.Data)) return;
                 if (string.IsNullOrEmpty(duration)) duration += args.Data;
                 Trace.WriteLine($"\n\n===========================\n" +

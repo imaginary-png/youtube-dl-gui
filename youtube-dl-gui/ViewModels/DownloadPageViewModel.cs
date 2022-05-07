@@ -195,14 +195,6 @@ namespace youtube_dl_gui.ViewModels
         /// <param name="source"></param>
         private void SimplifyFormatsToUniqueResolutionsOnly(VideoSource source)
         {
-            /*if (source.URL.Contains("twitch.tv"))
-            {
-                SimplifyTwitchURL(source);
-                return;
-            }*/
-
-            source.Formats.ForEach(s => Trace.WriteLine(s));
-
             var resolutions = new List<string>();
 
             //get a list of available resolutions based on height, e.g., 1920x1080 = 1080p, 2560x1440 = 1440p
@@ -231,17 +223,6 @@ namespace youtube_dl_gui.ViewModels
             source.SelectedFormat = source.Formats[0].Height;
         }
 
-        //just set any twitch links to "best" quality only, for simplicity.
-        private void SimplifyTwitchURL(VideoSource source)
-        {
-            var format = new VideoFormat
-            {
-                ResolutionLabel = "best",
-                Height = "best" //height is needed for the view's combobox default selection
-            };
-            source.Formats = new List<VideoFormat> { format };
-            source.SelectedFormat = source.Formats[0].ResolutionLabel;
-        }
         #endregion
 
         #region Download helpers

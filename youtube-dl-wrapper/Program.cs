@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
 
 namespace youtube_dl_gui_wrapper

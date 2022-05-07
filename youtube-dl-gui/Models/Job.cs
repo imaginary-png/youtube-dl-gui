@@ -53,11 +53,11 @@ namespace youtube_dl_gui.Models
         {
             //THIS IF BLOCK CAN PROBABLY BE DELETED, JUST WANT TO TEST A BIT MORE AT SOME POINT. -- SAME NOW FUNCTIONALITY HANDLED IN DOWNLOADPAGEVIEWMODEL -> DOJOB();
             //update download log  
-          /*  if (e.PropertyName == nameof(Source.DownloadLog.DownloadPercentage))
-            {   //yt-dlp - no decimal, youtube-dl decimal... for 100%.
-                if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%") SetStatus(JobStatus.Success);
-                else SetStatus(JobStatus.Downloading);
-            }*/
+            /*  if (e.PropertyName == nameof(Source.DownloadLog.DownloadPercentage))
+              {   //yt-dlp - no decimal, youtube-dl decimal... for 100%.
+                  if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%") SetStatus(JobStatus.Success);
+                  else SetStatus(JobStatus.Downloading);
+              }*/
 
             //if livestream, update to downloading...
             if (e.PropertyName == nameof(Source.DownloadLog.IsLiveStream))

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using youtube_dl_gui_wrapper.Models;
 
@@ -37,7 +36,7 @@ namespace youtube_dl_gui_wrapper
             var videoFormats = new List<VideoFormat>();
 
             var toRemove = formatList.FindIndex(s => s.Contains("format code"));
-            formatList.RemoveRange(0, toRemove+1); //remove lines that are not relevant.
+            formatList.RemoveRange(0, toRemove + 1); //remove lines that are not relevant.
 
             foreach (var str in formatList)
             {
