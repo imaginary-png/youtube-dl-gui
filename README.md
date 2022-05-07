@@ -9,10 +9,11 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 
 
 ### Supports
-* Youtube video
-* Youtube Playlists (best format only)
-* Twitch Vods (best format only)
-* Twitch Live Streams (sorta, but you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
+* Youtube Videos
+* Youtube Playlists ('best' format only, as each video may have differing resolutions)
+* Twitch Vods
+* Twitch Livestreams (sorta, but you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
+* More than likely able to handle a variety of other sites available via command line tool, but can't promise anything.
 
 ###### Requires
 * [youtube-dl.exe](https://ytdl-org.github.io/youtube-dl/) / [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp) (both or one, bundled together in the 'with exe' ver.)
@@ -34,7 +35,7 @@ Download Page:
 Settings Page:  
 <img src="https://i.imgur.com/UtBhpaG.png" width="800" height="500"/>      
 
-* **Use Youtube DL** -- Disabled by default. Currently uses yt-dlp as youtube-dl has issues with youtube downloads. Toggle this on if you want to use youtube-dl but it shouldn't make a difference for the GUI supported websites.
+* **Use Youtube DL** -- Disabled by default. Currently uses yt-dlp as youtube-dl has issues with youtube downloads. Toggle this on if you want to use youtube-dl for some reason, but it shouldn't make a difference for the GUI supported websites.
 * **Bulk Download** -- Enabled by default. Uncheck to download videos one-by-one, if internet slow or something.
 * **Download Folder** -- Set the location to download to. 
 
