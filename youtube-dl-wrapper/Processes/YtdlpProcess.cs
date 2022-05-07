@@ -39,7 +39,6 @@ namespace youtube_dl_gui_wrapper
             var videoFormats = new List<VideoFormat>();
 
             var toRemove = formatList.FindIndex(s => s.Contains("RESOLUTION"));
-            Console.WriteLine($"\nTO REMOVE {toRemove}\n");
 
             formatList.RemoveRange(0, toRemove + 2); //remove lines that are not relevant.
 

@@ -75,7 +75,7 @@ namespace youtube_dl_gui_wrapper
 
             string parameters;
 
-            //I CAN DEFINITE CLEAN THIS CODE UP, IT'S A BIT OF A MESS. HIERARCHICAL.
+            //I CAN DEFINITELY CLEAN THIS CODE UP, IT'S A BIT OF A MESS. HIERARCHICAL.
 
             if (source.SelectedFormat == "audio")
             {
