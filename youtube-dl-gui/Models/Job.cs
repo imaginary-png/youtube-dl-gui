@@ -53,7 +53,8 @@ namespace youtube_dl_gui.Models
         {
             //update download log
             if (e.PropertyName == nameof(Source.DownloadLog.DownloadPercentage))
-            {   //yt-dlp - no decimal, youtube-dl decimal... for 100%
+            {   //yt-dlp - no decimal, youtube-dl decimal... for 100%. This if isn't really needed anymore... but doesn't hurt to leave it.
+                //-- status should update to success after await download returns true / false;
                 if (Source.DownloadLog.DownloadPercentage == "100%" || Source.DownloadLog.DownloadPercentage == "100.0%") SetStatus(JobStatus.Success);
                 else SetStatus(JobStatus.Downloading);
             }
@@ -66,7 +67,7 @@ namespace youtube_dl_gui.Models
                     Source.DownloadLog.FileSize = "Live Stream";
                 }
             }
-            //is selected format changes, set status ready for download
+            //if selected format changes, set status ready for download
             else if (e.PropertyName == nameof(Source.SelectedFormat))
             {
                 //if already going to change status to waiting, don't bother trying again.

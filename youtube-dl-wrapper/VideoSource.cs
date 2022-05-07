@@ -99,12 +99,13 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Starts youtube-dl download process
         /// </summary>
-        public async Task Download()
+        public async Task<bool> Download()
         {
-            if (_isDownloading) return;
+            if (_isDownloading) return false;
             _isDownloading = true;
-            await _process.StartDownload(this, UseHeightForDownload);
+            var result = await _process.StartDownload(this, UseHeightForDownload);
             _isDownloading = false;
+            return result;
         }
 
 

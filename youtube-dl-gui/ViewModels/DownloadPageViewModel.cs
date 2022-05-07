@@ -250,10 +250,25 @@ namespace youtube_dl_gui.ViewModels
             {
                 if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
                 Trace.WriteLine($"Starting Job: {j.Source.FileName}\n");
-                await j.Source.Download();
+
+                /*var result = await j.Source.Download();
+
+                if (result) j.SetStatus(JobStatus.Success);
+                else j.SetStatus(JobStatus.Failed);*/
+
+                await DoJob(j);
+
                 Trace.WriteLine($"\nFinished Job: {j.Source.FileName}\n");
                 //else something went wrong, fail? cancelled?
             }
+        }
+
+        private async Task DoJob(Job job)
+        {
+            var result = await job.Source.Download();
+
+            if (result) job.SetStatus(JobStatus.Success);
+            else job.SetStatus(JobStatus.Failed);
         }
 
         private async Task DownloadInBulk()
@@ -267,7 +282,9 @@ namespace youtube_dl_gui.ViewModels
             {
                 if (j.Status == JobStatus.Success.ToString() || j.Status == JobStatus.Downloading.ToString()) continue; //skip if finished or currently downloading 
                 Trace.WriteLine("Adding Job " + j.Source.FileName);
-                queueList.Add(j.Source.Download());
+
+                //queueList.Add(j.Source.Download());
+                queueList.Add(DoJob(j));
             }
 
             while (queueList.Any())

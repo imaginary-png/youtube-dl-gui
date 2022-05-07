@@ -85,6 +85,7 @@
 
             <!-- Side Panel-->
             <Border Grid.Row="2"
+                    Grid.RowSpan="2"
                     Grid.Column="0"
                     CornerRadius="0 0 0 8">
                 <StackPanel Grid.Row="1" 
