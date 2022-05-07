@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using youtube_dl_gui_wrapper.Models;
@@ -36,6 +37,12 @@ namespace youtube_dl_gui_wrapper
             }
         }
 
+        /// <summary>
+        /// Attempts to download the video.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="useHeight"></param>
+        /// <returns></returns>
         public async Task<bool> StartDownload(VideoSource source, bool useHeight = false)
         {
             var result = false;
@@ -49,6 +56,11 @@ namespace youtube_dl_gui_wrapper
                       args.Data.Contains("% of"))) return;     //[download]   2.0% of ~629.58MiB at  1.04MiB/s ETA 09:53
                 if (args.Data.Contains("in")) return;          //last line of finished download is: [download] 100% of 115.06MiB in 00:10, ignore.
                 UpdateDownloadInfo(source.DownloadLog, args.Data);
+
+                if (Regex.Match(args.Data, @"\d+ of \d+").Success)
+                {
+                    UpdatePlaytlistInfo(source, args.Data);
+                }
             });
 
             var errorDel = new DataReceivedEventHandler((sender, args) =>
@@ -61,13 +73,13 @@ namespace youtube_dl_gui_wrapper
                 source.DownloadLog.IsLiveStream = true;
             });
 
-            //currently hardcoded to assume selected format is a height value, not an actual format code. 
             string parameters;
 
+            //I CAN DEFINITE CLEAN THIS CODE UP, IT'S A BIT OF A MESS. HIERARCHICAL.
 
             if (source.SelectedFormat == "audio")
             {
-                parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
+                parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                              $" -f \"bestaudio\" --newline"; //bestaudio
                 result = await Execute(parameters, outputDel, null, token: source.Token);
                 return result;
@@ -76,7 +88,7 @@ namespace youtube_dl_gui_wrapper
             {
                 try
                 {
-                    parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
+                    parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                                  $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
                     result = await Execute(parameters, outputDel, null, token: source.Token);
                     return result;
@@ -89,7 +101,7 @@ namespace youtube_dl_gui_wrapper
                 try
                 {
                     //try without specifying video/audio stream.
-                    parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
+                    parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                                  $" -f \"best[height={source.SelectedFormat}]\" --newline";
                     result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                     return result;
@@ -101,23 +113,17 @@ namespace youtube_dl_gui_wrapper
             }
 
             //if not basing on height, try...
-            parameters = @$"-o {downloadFolder}{NamingScheme} " + source.URL +
+
+            //if format is 'best', let youtube-dl / yt-dlp choose best streams
+            if (source.SelectedFormat == "best")
+            {
+                parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
+                             $" --newline";
+                return await Execute(parameters, outputDel, null, token: source.Token);
+            }
+
+            parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                          $" -f {source.SelectedFormat} --newline";
-
-            #region old, ignore, delete later
-
-            /* else if (useHeight && source.URL.Contains("twitch.tv")) //twitch does not have multiple streams, can't use bestvideo+bestaudio
-             {
-                 parameters = @$"-o {DefaultOutputFolder}{NamingScheme} " + source.URL +
-                              $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
-             }
-             else
-             {
-                 parameters = @$"-o {DefaultOutputFolder}{NamingScheme} " + source.URL +
-                              $" -f {source.SelectedFormat} --newline";
-             }*/
-
-            #endregion
 
             return await Execute(parameters, outputDel, null, token: source.Token);
         }
@@ -125,7 +131,7 @@ namespace youtube_dl_gui_wrapper
 
         public async Task<List<VideoFormat>> GetFormats(string url)
         {
-            var parameters = url + " -F";
+            var parameters = $"\"{url}\" -F";
             var formatOutputList = new List<string>();
             var playlist = false;
 
@@ -142,18 +148,21 @@ namespace youtube_dl_gui_wrapper
             //do something else if the URL is a playlist....
 
             var formats = ExtractInfoForFormats(formatOutputList);
-
-            //formatOutputList.ForEach(Console.WriteLine);
+            
+            formatOutputList.ForEach(s =>Trace.WriteLine(s));
+            formatOutputList.ForEach(Console.WriteLine);
             return formats;
         }
 
         public async Task<string> GetFileName(string url)
         {
 
-            var parameters = url + " --get-filename";
+            var parameters = $"\"{url}\" --get-filename";
             var filename = string.Empty;
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
             {
+                if (string.IsNullOrWhiteSpace(args.Data)) return;
+               
                 if (string.IsNullOrEmpty(filename)) filename += args.Data;
                 Trace.WriteLine($"\n\n===========================\n" +
                                 $"filename: {filename}\n" +
@@ -167,13 +176,14 @@ namespace youtube_dl_gui_wrapper
 
         public async Task<string> GetDuration(string url)
         {
-            var parameters = url + " --get-duration";
+            var parameters = $"\"{url}\" --get-duration";
             var duration = string.Empty;
             var outputDel = new DataReceivedEventHandler(((sender, args) =>
-            {
+            { 
+                if (string.IsNullOrWhiteSpace(args.Data)) return;
                 if (string.IsNullOrEmpty(duration)) duration += args.Data;
                 Trace.WriteLine($"\n\n===========================\n" +
-                                $"filename: {duration}\n" +
+                                $"duration: {duration}\n" +
                                 $"args.data: {args.Data}\n" +
                                 $"================================");
             }));
@@ -255,6 +265,12 @@ namespace youtube_dl_gui_wrapper
 
                 throw new ArgumentException(errMsg);
             }
+        }
+
+
+        private void UpdatePlaytlistInfo(VideoSource source, string data)
+        {
+            // get \d+ of \d from string and update duration
         }
 
         /// <summary>

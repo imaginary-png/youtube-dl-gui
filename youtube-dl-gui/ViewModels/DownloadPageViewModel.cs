@@ -195,11 +195,13 @@ namespace youtube_dl_gui.ViewModels
         /// <param name="source"></param>
         private void SimplifyFormatsToUniqueResolutionsOnly(VideoSource source)
         {
-            if (source.URL.Contains("twitch.tv"))
+            /*if (source.URL.Contains("twitch.tv"))
             {
                 SimplifyTwitchURL(source);
                 return;
-            }
+            }*/
+
+            source.Formats.ForEach(s => Trace.WriteLine(s));
 
             var resolutions = new List<string>();
 
@@ -265,6 +267,7 @@ namespace youtube_dl_gui.ViewModels
 
         private async Task DoJob(Job job)
         {
+            job.SetStatus(JobStatus.Downloading);
             var result = await job.Source.Download();
 
             if (result) job.SetStatus(JobStatus.Success);

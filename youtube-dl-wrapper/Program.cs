@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
 
 namespace youtube_dl_gui_wrapper
@@ -8,7 +9,6 @@ namespace youtube_dl_gui_wrapper
         static async Task Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-
         }
     }
 }

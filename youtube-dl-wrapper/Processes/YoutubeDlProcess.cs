@@ -67,6 +67,10 @@ namespace youtube_dl_gui_wrapper
                 width = widthXheight[0];
                 height = widthXheight[1];
             }
+            else if (resolution.Contains("p")) //example, twitch clips (not vods) -F output has resolution as 1080p instead of 1920x1080
+            {
+                height = resolution.Replace("p", "");
+            }
 
             return new VideoFormat(formatCode, ext, resolution, resolutionLabel, height, width, fps, size);
         }
