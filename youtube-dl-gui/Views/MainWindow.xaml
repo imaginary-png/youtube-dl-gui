@@ -84,19 +84,22 @@
             </Border>
 
             <!-- Side Panel-->
-            <StackPanel Grid.Row="1" 
+            <Border Grid.Row="2"
+                    Grid.Column="0"
+                    CornerRadius="0 0 0 8">
+                <StackPanel Grid.Row="1" 
                         Grid.RowSpan="4" 
                         Grid.Column="0"
                         Background="{DynamicResource SecondaryBackgroundColour}">
-                <StackPanel Grid.Row="3" Grid.Column="0" Margin="0 0 0 0">
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0 0 0 0">
 
-                    <DockPanel>
-                        <Border Name="DownloadPageSelectedBar"
+                        <DockPanel>
+                            <Border Name="DownloadPageSelectedBar"
                                 Background="{DynamicResource TitleBarColour}" 
                                 Height="Auto"
                                 Width="15"
                                 Visibility="Visible"/>
-                        <Button Height="100" 
+                            <Button Height="100" 
                                 Margin="-15 0 0 0"
                                 Name="DownloadPageButton"
                                 FontSize="20"
@@ -104,17 +107,17 @@
                                 Command="{Binding ChangeViews}"
                                 CommandParameter="{Binding DownloadsPage}"
                                 Click="DownloadPageButton_OnClick">
-                            <Image Source="/Images/download.png"/>
-                        </Button>
-                    </DockPanel>
+                                <Image Source="/Images/download.png"/>
+                            </Button>
+                        </DockPanel>
 
-                    <DockPanel>
-                        <Border Name="SettingsPageSelectedBar"
+                        <DockPanel>
+                            <Border Name="SettingsPageSelectedBar"
                                 Background="{DynamicResource TitleBarColour}" 
                                 Height="Auto"
                                 Width="15 "
                                 Visibility="Hidden"/>
-                        <Button Height="100" 
+                            <Button Height="100" 
                                 Margin="-15 0 0 0"
                                 Name="SettingsPageButton"
                                 FontSize="20"
@@ -122,11 +125,12 @@
                                 Command="{Binding ChangeViews}"
                                 CommandParameter="{Binding SettingsPage}"
                                 Click="SettingsPageButton_OnClick">
-                            <Image Source="/Images/settings.png"></Image>
-                        </Button>
-                    </DockPanel>
+                                <Image Source="/Images/settings.png"></Image>
+                            </Button>
+                        </DockPanel>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+            </Border>
             <!-- Main Content-->
             <ContentControl Grid.Row="2" Grid.Column="2"
                             Content="{Binding CurrentView}" 
