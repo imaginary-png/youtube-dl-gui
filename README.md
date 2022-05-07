@@ -15,7 +15,7 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 * Twitch Live Streams (sorta, but you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
 
 ###### Requires
-* [youtube-dl.exe](https://ytdl-org.github.io/youtube-dl/) / [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp) (both or one, depending on settings)
+* [youtube-dl.exe](https://ytdl-org.github.io/youtube-dl/) / [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp) (both or one, bundled together in the 'with exe' ver.)
 * .net 5.0
 * [ffmpeg](https://ffmpeg.org/download.html)
 
@@ -41,6 +41,11 @@ Settings Page:
 Settings are saved in config.json. You can manually edit this file or delete it to generate default settings, if something goes wrong.
 
 Executables are stored in the Exe folder, if you don't have youtube-dl / yt-dlp available via an env variable / PATH.
+
+### ToDo
+* idk, fix any unfound bugs
+* maybe test other websites
+* add an icon
 
 
 #### Icon Image attributions
