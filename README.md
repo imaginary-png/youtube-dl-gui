@@ -1,4 +1,4 @@
-# youtube-dl-gui
+# youtube-dl / yt-dlp gui 
 C# WPF gui for youtube-dl / yt-dlp.
 
 A personal learning project.  
@@ -13,8 +13,8 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 * Youtube Playlists ✔ ('best' format only, as each video may have differing resolutions)
 * Twitch Vods ✔
 * Twtich Clips ✔
-* Twitch Livestreams (sorta, but you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
-* More than likely able to handle a variety of other sites available via command line tool, but can't I have not personally tested.
+* Twitch Livestreams ✔(sorta, bit dodge. you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
+* More than likely able to handle a variety of other sites available via the command line tool, but I have not personally tested.
 
 ###### Requires
 * [youtube-dl.exe](https://ytdl-org.github.io/youtube-dl/) / [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp) (both or one, bundled together in the 'with exe' ver.)
@@ -23,11 +23,12 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 
 ### Why should you use this?
 You probably shouldn't. There are better youtube-dl GUI's out there that have much more features and development.  
-This is okay if you only need to download youtube videos and twitch VODs, as those are the only websites I have tested for my personal use.  
+This works if you want a graphical interface to download videos - particularly Youtube and Twitch, as these are websites I've personally tested.  
+Other sites will more than likely work, but I can't guarantee anything.
 
-Works okay with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
+Works with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
 
-Each website potentially has it's own quirks for what youtube-dl outputs which can makes it difficult to cover all edge cases without thorough planning / testing. I only really began development with youtube in mind, then twitch vods.
+Each website potentially has it's own quirks for what formats + audio-video streams are available, and for what youtube-dl outputs which can make it difficult to cover all cases without thorough planning / testing. I only really began development with youtube in mind, then twitch vods.
 
 ## info 
 Download Page:  
@@ -58,3 +59,8 @@ Executables are stored in the Exe folder, if you don't have youtube-dl / yt-dlp 
 <a target="_blank" href="https://icons8.com/icon/8112/close">Close</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
 <a target="_blank" href="https://icons8.com/icon/11152/subtract">Subtract</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
 <a target="_blank" href="https://icons8.com/icon/vU8WkCSNnXng/maximize-button">Maximize Button</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
+
+---------  
+ 
+[youtube-dl](https://github.com/ytdl-org/youtube-dl)  
+[yt-dlp](https://github.com/yt-dlp/yt-dlp/tree/master/.github)
