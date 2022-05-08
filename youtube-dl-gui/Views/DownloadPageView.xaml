@@ -98,7 +98,8 @@
                                     Width="*"
                                     Binding="{Binding Status}"></DataGridTextColumn>
                
-                <DataGridTemplateColumn Header="Formats">
+                <DataGridTemplateColumn Header="Formats"
+                                        Width=".72*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <!-- Why doesn't it update on propertychanged implicitly? When would you not want a users selection to update immediately? Why did I spend 4+ hours on this combobox -->
