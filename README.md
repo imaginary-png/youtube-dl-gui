@@ -59,3 +59,8 @@ Executables are stored in the Exe folder, if you don't have youtube-dl / yt-dlp 
 <a target="_blank" href="https://icons8.com/icon/8112/close">Close</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
 <a target="_blank" href="https://icons8.com/icon/11152/subtract">Subtract</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
 <a target="_blank" href="https://icons8.com/icon/vU8WkCSNnXng/maximize-button">Maximize Button</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>  
+
+---------  
+ 
+[youtube-dl](https://github.com/ytdl-org/youtube-dl)  
+[yt-dlp](https://github.com/yt-dlp/yt-dlp/tree/master/.github)
