@@ -5,8 +5,9 @@ A personal learning project.
 
 Wraps basic download features of youtube-dl / yt-dlp.
 
-https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-9928-931f18c8cdbe.mp4
+https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-9928-931f18c8cdbe.mp4   
 
+Urls must be separated by spaces (which is applied automatically at the end when you paste)
 
 ### Supports
 * Youtube Videos ✔
@@ -22,8 +23,10 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 * [ffmpeg](https://ffmpeg.org/download.html)
 
 ### Why should you use this?
-You probably shouldn't. There are better youtube-dl GUI's out there that have much more features and development.  
-This works if you want a graphical interface to download videos - particularly Youtube and Twitch, as these are websites I've personally tested.  
+No particular reason. There are better youtube-dl GUI's out there that have more features and development.  
+
+This gets the job done if you want a graphical interface to download videos - particularly Youtube and Twitch, as these are websites I've personally tested.   
+
 Other sites will more than likely work, but I can't guarantee anything.
 
 Works with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
