@@ -93,6 +93,7 @@ namespace youtube_dl_gui_wrapper
                 catch (ArgumentException e)
                 {
                     //ignore, try args without audio stream
+                    if (result) return true; //if completed successfully, don't try other params
                 }
 
                 try
@@ -106,6 +107,7 @@ namespace youtube_dl_gui_wrapper
                 catch (ArgumentException e)
                 {
                     //ignore and try with selected format
+                    if (result) return true;
                 }
             }
 
@@ -252,13 +254,14 @@ namespace youtube_dl_gui_wrapper
                 p.ErrorDataReceived += (sender, args) =>
                 {
                     if (string.IsNullOrEmpty(args.Data)) return;
-                    errors.Add(args.Data);
+                    if (!args.Data.Contains("is not a valid URL") &&
+                        !args.Data.Contains("Requested format is not available")) return; //only handle errors for invalid urls or bad format
 
+                    errors.Add(args.Data);
                     /* Console.ForegroundColor = ConsoleColor.Cyan;
                      Console.BackgroundColor = ConsoleColor.DarkGray;
                      Console.WriteLine($"Error: {args.Data}|");
                      Console.ResetColor();*/
-
                     Trace.WriteLine($"Error: {args.Data}|");
                 };
                 p.ErrorDataReceived += errorDel;
@@ -269,8 +272,10 @@ namespace youtube_dl_gui_wrapper
                 await p.WaitForExitAsync(token);
 
                 var exitCode = p.ExitCode;
-
-                if (errors.Count <= 0) return p.ExitCode == 0 ? true : false;
+                Trace.WriteLine("\n\n=============================================\n" +
+                                $"Exit Code: {exitCode}\n" +
+                                $"================================================\n\n");
+                if (errors.Count == 0) return p.ExitCode == 0 ? true : false;
 
                 string errMsg = "";
                 errors.ForEach(s =>
