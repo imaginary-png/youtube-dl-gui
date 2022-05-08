@@ -40,9 +40,10 @@ namespace youtube_dl_gui_wrapper
         /// <summary>
         /// Attempts to download the video.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="useHeight"></param>
-        /// <returns></returns>
+        /// <param name="source">Video Source containing URL and Selected Format</param>
+        /// <param name="useHeight">Defaults to false. Set whether Selected Format is actually height, not a format code.</param>
+        /// <returns><see cref="bool"/> True if download process exited successfully, otherwise false</returns>
+        /// <exception cref="ArgumentException"> Throws if invalid URL or Selected Format</exception>
         public async Task<bool> StartDownload(VideoSource source, bool useHeight = false)
         {
             var result = false;
@@ -58,7 +59,6 @@ namespace youtube_dl_gui_wrapper
 
                 //playlist "video 1 of 3", doesn't show with --newline arg...
                 if (Regex.Match(args.Data, @"\d+ of \d+").Success) UpdatePlaylistInfo(source, args.Data); //else if its playlist progress
-
             });
 
             var errorDel = new DataReceivedEventHandler((sender, args) =>
@@ -72,8 +72,6 @@ namespace youtube_dl_gui_wrapper
 
             string parameters;
 
-            //I CAN DEFINITELY CLEAN THIS CODE UP, IT'S A BIT OF A MESS. HIERARCHICAL.
-
             if (source.SelectedFormat == "audio")
             {
                 parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
@@ -81,38 +79,6 @@ namespace youtube_dl_gui_wrapper
                 result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                 return result;
             }
-            else if (useHeight) //try with separate video+audio stream first, then try just with video, then throw?
-            {
-                try
-                {
-                    parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
-                                 $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio\" --newline";
-                    result = await Execute(parameters, outputDel, errorDel, token: source.Token);
-                    return result;
-                }
-                catch (ArgumentException e)
-                {
-                    //ignore, try args without audio stream
-                    if (result) return true; //if completed successfully, don't try other params
-                }
-
-                try
-                {
-                    //try without specifying video/audio stream.
-                    parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
-                                 $" -f \"best[height={source.SelectedFormat}]\" --newline";
-                    result = await Execute(parameters, outputDel, errorDel, token: source.Token);
-                    return result;
-                }
-                catch (ArgumentException e)
-                {
-                    //ignore and try with selected format
-                    if (result) return true;
-                }
-            }
-
-            //if not basing on height, try...
-
             //if format is 'best', let youtube-dl / yt-dlp choose best streams
             if (source.SelectedFormat == "best")
             {
@@ -120,14 +86,24 @@ namespace youtube_dl_gui_wrapper
                              $" --newline";
                 return await Execute(parameters, outputDel, errorDel, token: source.Token);
             }
-
+            if (useHeight) //if attempting download based on height try with separate video+audio streams first, then best[based on height]
+            {
+                parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
+                             $" -f \"bestvideo[height={source.SelectedFormat}]+bestaudio/best[height={source.SelectedFormat}]/best\" --newline";
+                result = await Execute(parameters, outputDel, errorDel, token: source.Token);
+                return result;
+            }
+            //if not basing on height, try...
             parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
                          $" -f {source.SelectedFormat} --newline";
-
             return await Execute(parameters, outputDel, errorDel, token: source.Token);
         }
 
-
+        /// <summary>
+        /// Gets available formats.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<List<VideoFormat>> GetFormats(string url)
         {
             var parameters = $"\"{url}\" -F";
@@ -153,6 +129,11 @@ namespace youtube_dl_gui_wrapper
             return formats;
         }
 
+        /// <summary>
+        /// Gets video name.
+        /// </summary>
+        /// <param name="url">video url</param>
+        /// <returns></returns>
         public async Task<string> GetFileName(string url)
         {
 
@@ -173,6 +154,11 @@ namespace youtube_dl_gui_wrapper
             return filename;
         }
 
+        /// <summary>
+        /// Gets video duration.
+        /// </summary>
+        /// <param name="url">video url</param>
+        /// <returns></returns>
         public async Task<string> GetDuration(string url)
         {
             var parameters = $"\"{url}\" --get-duration";
@@ -191,6 +177,11 @@ namespace youtube_dl_gui_wrapper
             return duration;
         }
 
+        /// <summary>
+        /// Gets file name and duration.
+        /// </summary>
+        /// <param name="url">video url</param>
+        /// <returns></returns>
         public async Task<List<string>> GetFileNameAndDuration(string url)
         {
             var parameters = $"\"{url}\" --get-filename --get-duration";
@@ -250,7 +241,6 @@ namespace youtube_dl_gui_wrapper
                 };
                 p.OutputDataReceived += outputDel;
 
-
                 p.ErrorDataReceived += (sender, args) =>
                 {
                     if (string.IsNullOrEmpty(args.Data)) return;
@@ -282,7 +272,6 @@ namespace youtube_dl_gui_wrapper
                 {
                     errMsg += s + "\n";
                 });
-
 
                 throw new ArgumentException(errMsg);
             }

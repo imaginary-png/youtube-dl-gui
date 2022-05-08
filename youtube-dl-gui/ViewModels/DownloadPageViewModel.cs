@@ -102,7 +102,7 @@ namespace youtube_dl_gui.ViewModels
                 // using height for video download to simplify GUI functionality.
                 var videoSource = new VideoSource(s, _settings.OutputFolder, _settings.UseYoutubeDL, true, exePath);
 
-                //awaiting here coz if more than 4-5 videos with 3 processes for getting name,duration,formats, it uses a lot of cpu
+                //not awaiting here makes my [Antimalware Service Executable (Microsoft Defender Antivirus Service)] spike up in cpu usage temporarily....
                 await GetVideoData(videoSource);
             }
 

@@ -44,6 +44,9 @@ namespace youtube_dl_gui_wrapper
         }
 
         public string OutputFolder { get; set; }
+        /// <summary>
+        /// If set true, SelectedFormat is assumed to be a height value
+        /// </summary>
         public bool UseHeightForDownload { get; set; }
 
         public List<VideoFormat> Formats
@@ -57,6 +60,9 @@ namespace youtube_dl_gui_wrapper
             }
         }
 
+        /// <summary>
+        /// The format code to download, or the height if UseHeightForDownload true
+        /// </summary>
         public string SelectedFormat
         {
             get => _selectedFormat;
@@ -78,7 +84,7 @@ namespace youtube_dl_gui_wrapper
         /// <param name="url">Video URL</param>
         /// <param name="outputFolder">Output folder to download to, defaults to desktop</param>
         /// <param name="useYoutubeDL">Use youtube-dl? otherwise, use yt-dlp</param>
-        /// <param name="useHeightForDownload">Use height as basis for video download, not format code</param>
+        /// <param name="useHeightForDownload">Use height as basis for video download, not format code, for SelectedFormat</param>
         public VideoSource(string url, string outputFolder = "", bool useYoutubeDL = true, bool useHeightForDownload = true, string exePath = "")
         {
             URL = url;
