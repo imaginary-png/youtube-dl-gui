@@ -13,7 +13,7 @@ https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-
 * Youtube Playlists ✔ ('best' format only, as each video may have differing resolutions)
 * Twitch Vods ✔
 * Twtich Clips ✔
-* Twitch Livestreams ✔(sorta, but you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
+* Twitch Livestreams ✔(sorta, bit dodge. you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
 * More than likely able to handle a variety of other sites available via the command line tool, but I have not personally tested.
 
 ###### Requires
