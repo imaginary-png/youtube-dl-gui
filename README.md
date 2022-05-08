@@ -1,4 +1,4 @@
-# youtube-dl-gui
+# youtube-dl / yt-dlp gui 
 C# WPF gui for youtube-dl / yt-dlp.
 
 A personal learning project.  
