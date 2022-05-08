@@ -3,7 +3,7 @@ C# WPF gui for youtube-dl / yt-dlp.
 
 A personal learning project.  
 
-Wraps basic download features of youtube-dl / yt-dlp.
+Wraps basic download and video data gathering features of youtube-dl / yt-dlp.
 
 https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-9928-931f18c8cdbe.mp4   
 
@@ -11,10 +11,10 @@ Urls must be separated by spaces (which is applied automatically at the end when
 
 ### Supports
 * Youtube Videos ✔
-* Youtube Playlists ✔ ('best' format only, as each video may have differing resolutions)
+* Youtube Playlists ✔ ('best' format only, as there may be differing resolutions. -- equiv. to "(youtube-dl|yt-dlp) URL"
 * Twitch Vods ✔
 * Twtich Clips ✔
-* Twitch Livestreams ✔(sorta, bit dodge. you can't cancel partway through like with via command line. Have to wait til the stream is finished.)
+* Twitch Livestreams ✔(works, but you can't cancel partway like with via command line. Have to wait til the stream is finished.)
 * More than likely able to handle a variety of other sites available via the command line tool, but I have not personally tested.
 
 ###### Requires
@@ -27,11 +27,9 @@ No particular reason. There are better youtube-dl GUI's out there that have more
 
 This gets the job done if you want a graphical interface to download videos - particularly Youtube and Twitch, as these are websites I've personally tested.   
 
-Other sites will more than likely work, but I can't guarantee anything.
+Other sites will more than likely work, but I only really began development with youtube in mind, then twitch vods.  
 
 Works with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
-
-Each website potentially has it's own quirks for what formats + audio-video streams are available, and for what youtube-dl outputs which can make it difficult to cover all cases without thorough planning / testing. I only really began development with youtube in mind, then twitch vods.
 
 ## info 
 Download Page:  
@@ -40,7 +38,7 @@ Download Page:
 Settings Page:  
 <img src="https://i.imgur.com/UtBhpaG.png" width="800" height="500"/>      
 
-* **Use Youtube DL** -- Disabled by default. Currently uses yt-dlp as youtube-dl has issues with youtube downloads. Toggle this on if you want to use youtube-dl for some reason, but it shouldn't make a difference for the GUI supported websites.
+* **Use Youtube DL** -- Disabled by default. Currently uses yt-dlp as youtube-dl has issues with youtube downloads. Toggle this on if you want to use youtube-dl for some reason, but it shouldn't make a difference for the GUI supported websites.  
 * **Bulk Download** -- Enabled by default. Uncheck to download videos one-by-one, if internet slow or something.
 * **Download Folder** -- Set the location to download to. 
 
