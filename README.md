@@ -1,9 +1,5 @@
-# youtube-dl / yt-dlp gui 
-C# WPF gui for youtube-dl / yt-dlp.
-
-A personal learning project.  
-
-Wraps basic download and video data gathering features of youtube-dl / yt-dlp.
+## youtube-dl / yt-dlp gui 
+C# WPF gui for youtube-dl / yt-dlp. Wraps basic download and video data gathering features of youtube-dl / yt-dlp.  
 
 https://user-images.githubusercontent.com/70348218/167243327-b8d9386b-6ef0-4472-9928-931f18c8cdbe.mp4   
 
@@ -26,7 +22,6 @@ Urls must be separated by spaces (which is applied automatically at the end when
 No particular reason. There are better youtube-dl GUI's out there that have more features and development.  
 
 This gets the job done if you want a graphical interface to download videos - particularly Youtube and Twitch, as these are websites I've personally tested.   
-
 Other sites will more than likely work, but I only really began development with youtube in mind, then twitch vods.  
 
 Works with twitch livestreams, but you have to wait for the stream to end, if you cancel mid-way it will not save the file properly and will result in an unwatchable video. Unlike via CLI.  
@@ -65,3 +60,6 @@ Executables are stored in the Exe folder, if you don't have youtube-dl / yt-dlp 
  
 [youtube-dl](https://github.com/ytdl-org/youtube-dl)  
 [yt-dlp](https://github.com/yt-dlp/yt-dlp/tree/master/.github)
+
+
+A personal learning project.
