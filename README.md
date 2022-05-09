@@ -7,7 +7,7 @@ Urls must be separated by spaces (which is applied automatically at the end when
 
 ### Supports
 * Youtube Videos ✔
-* Youtube Playlists ✔ ('best' format only, as there may be differing resolutions. -- equiv. to "(youtube-dl|yt-dlp) URL"
+* Youtube Playlists ✔ ('best' only, as there may be differing resolutions. --equiv. to "(youtube-dl|yt-dlp) URL"
 * Twitch Vods ✔
 * Twtich Clips ✔
 * Twitch Livestreams ✔(works, but you can't cancel partway like with via command line. Have to wait til the stream is finished.)
