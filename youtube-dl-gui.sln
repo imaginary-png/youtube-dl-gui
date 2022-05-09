@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "youtube-dl-wrapper", "youtu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "youtube-dl-wrapper_Tests", "youtube-dl-wrapper_Tests\youtube-dl-wrapper_Tests.csproj", "{92AC9171-2C64-4745-B896-3FB2CEF38206}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "youtube-dl-gui", "youtube-dl-gui\youtube-dl-gui.csproj", "{8CF867F1-D459-4240-A80A-2BC309402E3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "youtube-dl-gui", "youtube-dl-gui\youtube-dl-gui.csproj", "{8CF867F1-D459-4240-A80A-2BC309402E3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
