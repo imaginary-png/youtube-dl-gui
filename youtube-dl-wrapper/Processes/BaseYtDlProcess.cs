@@ -75,7 +75,7 @@ namespace youtube_dl_gui_wrapper
             if (source.SelectedFormat == "audio")
             {
                 parameters = @$"-o {downloadFolder}{NamingScheme} " + $"\"{source.URL}\"" +
-                             $" -f \"bestaudio\" --newline"; //bestaudio
+                             $" -f \"bestaudio/best\" --newline"; //sometimes only audio (podcast), but 'bestaudio' format not available? so try 'best'
                 result = await Execute(parameters, outputDel, errorDel, token: source.Token);
                 return result;
             }
